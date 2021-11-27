@@ -6,7 +6,7 @@ import javax.inject.Inject
 
 interface RestClient {
     suspend fun getWeatherForecast(lat: Double, lon: Double): ForecastDTO
-    suspend fun getCityLatLon(cityName: String): LocationInfoDTO
+    suspend fun getCityLatLon(cityName: String): List<LocationInfoDTO>
 }
 
 internal class RestClientImpl @Inject constructor(
