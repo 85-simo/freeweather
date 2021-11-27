@@ -9,6 +9,8 @@ data class ForecastDTO(
     val visibility: Double?,
     val wind: Wind?,
     val clouds: Clouds?,
+    val rain: Rain?,
+    val snow: Snow?,
     val dt: Long?,
     val sys: Sys?,
     val timezone: Long?,
@@ -17,8 +19,8 @@ data class ForecastDTO(
 )
 
 data class Coord(
-    val lon: Double?,
-    val lat: Double?
+    val lat: Double?,
+    val lon: Double?
 )
 
 data class Weather(
@@ -54,6 +56,13 @@ data class Rain(
     val lastHour: Double?,
     @SerializedName("3h")
     val h: Double?
+)
+
+data class Snow(
+    @SerializedName("1h")
+    val lastHour: Double?,
+    @SerializedName("3h")
+    val lastThreeHrs: Double?
 )
 
 data class Sys(
