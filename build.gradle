@@ -3,7 +3,8 @@ buildscript {
     ext.hilt_version = '2.40'
     ext.retrofit_version = '2.9.0'
     ext.room_version = '2.3.0'
-    ext.mockito_version = '4.0.0'
+    ext.okhttp_version = '4.9.0'
+
 
 
     repositories {
