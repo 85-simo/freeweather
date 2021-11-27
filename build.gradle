@@ -2,6 +2,8 @@
 buildscript {
     ext.hilt_version = '2.40'
     ext.retrofit_version = '2.9.0'
+    ext.room_version = '2.3.0'
+
 
     repositories {
         google()
