@@ -5,6 +5,7 @@ class LocationInfoDTO(
     val local_names: LocalNames?,
     val lat: Double?,
     val lon: Double?,
+    val state: String?,
     val country: String?
 )
 
