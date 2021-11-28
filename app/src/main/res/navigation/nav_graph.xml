@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/nav_graph.xml">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph.xml"
+    app:startDestination="@id/dayWeatherFragment">
 
+    <fragment
+        android:id="@+id/dayWeatherFragment"
+        android:name="com.example.freeweather.presentation.dashboard.DayWeatherFragment"
+        android:label="DayWeatherFragment"
+        tools:layout="@layout/fragment_day_weather"/>
 </navigation>
