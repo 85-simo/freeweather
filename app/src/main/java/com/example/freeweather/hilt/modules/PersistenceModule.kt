@@ -29,6 +29,6 @@ abstract class PersistenceModule {
             applicationContext,
             AppDatabase::class.java,
             DB_NAME
-        )
+        ).build()
     }
 }
