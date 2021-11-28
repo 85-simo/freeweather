@@ -3,70 +3,70 @@ package com.example.freeweather.data.api.dto
 import com.google.gson.annotations.SerializedName
 
 data class ForecastDTO(
-    val coord: Coord?,
-    val weather: List<Weather>?,
-    val main: Main?,
-    val visibility: Double?,
-    val wind: Wind?,
+    val coord: Coord,
+    val weather: List<Weather>,
+    val main: Main,
+    val visibility: Double,
+    val wind: Wind,
     val clouds: Clouds?,
     val rain: Rain?,
     val snow: Snow?,
-    val dt: Long?,
-    val sys: Sys?,
-    val timezone: Long?,
-    val id: Long?,
-    val name: String?
+    val dt: Long,
+    val sys: Sys,
+    val timezone: Long,
+    val id: Long,
+    val name: String
 )
 
 data class Coord(
-    val lat: Double?,
-    val lon: Double?
+    val lat: Double,
+    val lon: Double
 )
 
 data class Weather(
-    val id: Long?,
-    val main: String?,
-    val description: String?,
-    val icon: String?,
+    val id: Long,
+    val main: String,
+    val description: String,
+    val icon: String,
 )
 
 data class Main(
-    val temp: Double?,
+    val temp: Double,
     @SerializedName("feels_like")
-    val feelsLike: Double?,
+    val feelsLike: Double,
     @SerializedName("temp_min")
-    val tempMin: Double?,
+    val tempMin: Double,
     @SerializedName("temp_max")
-    var tempMax: Double?,
-    var pressure: Double?,
-    var humidity: Double?
+    var tempMax: Double,
+    var pressure: Double,
+    var humidity: Double
 )
 
 data class Wind(
-    val speed: Double?,
-    val deg: Double?
+    val speed: Double,
+    val deg: Double
 )
 
 data class Clouds(
-    val all: Double?
+    val all: Double
 )
 
 data class Rain(
     @SerializedName("1h")
-    val lastHour: Double?,
+    val lastHour: Double,
     @SerializedName("3h")
-    val h: Double?
+    val lastThreeHrs: Double
 )
 
 data class Snow(
     @SerializedName("1h")
-    val lastHour: Double?,
+    val lastHour: Double,
     @SerializedName("3h")
-    val lastThreeHrs: Double?
+    val lastThreeHrs: Double
 )
 
 data class Sys(
-    val country: String?,
-    val sunrise: Long?,
-    val sunset:  Long?
+    val country: String,
+    val sunrise: Long,
+    val sunset:  Long
 )
