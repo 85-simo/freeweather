@@ -11,20 +11,18 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.Response
-import javax.inject.Singleton
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 import java.util.concurrent.TimeUnit
+import javax.inject.Singleton
 
 
 private const val REST_CLIENT_CONNECTION_TIMEOUT_SECONDS = 20L
 private const val REST_CLIENT_WRITE_TIMEOUT_SECONDS = 20L
 private const val REST_CLIENT_READ_TIMEOUT_SECONDS = 20L
 private const val API_CACHE_DIR = "api_cache"
-private const val API_CACHE_SIZE = 1024L * 1024L // 1 MiB
+private const val API_CACHE_SIZE = 10 * 1024L * 1024L // 10 MiB
 private const val BASE_URL = "http://api.openweathermap.org"
 private const val API_KEY_PARAM_NAME = "appid"
 private const val API_KEY_VALUE = "0db5caf45f1986305c1379cb056d6d34"
@@ -56,7 +54,7 @@ object ApiModule {
 
     @Provides
     @Singleton
-    fun provideHttpClient(interceptor: HttpLoggingInterceptor, apiCache: Cache) = OkHttpClient.Builder()
+    fun provideHttpClient(interceptor: Interceptor, apiCache: Cache) = OkHttpClient.Builder()
         .connectTimeout(REST_CLIENT_CONNECTION_TIMEOUT_SECONDS, TimeUnit.SECONDS)
         .readTimeout(REST_CLIENT_READ_TIMEOUT_SECONDS, TimeUnit.SECONDS)
         .writeTimeout(REST_CLIENT_WRITE_TIMEOUT_SECONDS, TimeUnit.SECONDS)
