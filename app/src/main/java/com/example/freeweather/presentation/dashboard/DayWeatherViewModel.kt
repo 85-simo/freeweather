@@ -1,7 +1,11 @@
 package com.example.freeweather.presentation.dashboard
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.freeweather.data.repository.Repository
+import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.Command
+import com.hadilq.liveevent.LiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -30,6 +34,9 @@ interface DayWeatherViewModel {
         val updatedAt: String
     )
 
+    val commands: LiveData<Command>
+    val viewState: LiveData<ViewState>
+
     fun searchButtonClicked()
     fun locationSet(name: String, lat: Double, lon: Double)
 }
@@ -37,10 +44,13 @@ interface DayWeatherViewModel {
 @HiltViewModel
 internal class DayWeatherViewModelImpl @Inject constructor(
     private val repository: Repository
-    ) : DayWeatherViewModel, ViewModel() {
+) : DayWeatherViewModel, ViewModel() {
+
+    override val commands = LiveEvent<Command>()
+    override val viewState = MutableLiveData<DayWeatherViewModel.ViewState>()
 
     override fun searchButtonClicked() {
-        TODO("Not yet implemented")
+
     }
 
     override fun locationSet(name: String, lat: Double, lon: Double) {
