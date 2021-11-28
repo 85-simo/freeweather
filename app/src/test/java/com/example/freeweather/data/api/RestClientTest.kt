@@ -64,16 +64,16 @@ class RestClientTest {
         runBlocking {
             val actual = restClient.getWeatherForecast(37.39, -122.08)
             val expected = ForecastDTO(
-                Coord( 37.39, -122.08),
-                listOf(Weather(800, "Clear", "clear sky", "01d")),
-                Main(282.55, 281.86, 280.37, 284.26, 1023.0, 100.0),
+                CoordDTO( 37.39, -122.08),
+                listOf(WeatherDTO(800, "Clear", "clear sky", "01d")),
+                MainDTO(282.55, 281.86, 280.37, 284.26, 1023.0, 100.0),
                 16093.0,
-                Wind(1.5, 350.0),
-                Clouds(1.0),
+                WindDTO(1.5, 350.0),
+                CloudsDTO(1.0),
                 rain = null,
                 snow = null,
                 1560350645L,
-                Sys("US", 1560343627L, 1560396563L),
+                SysDTO("US", 1560343627L, 1560396563L),
                 -25200L,
                 420006353L,
                 "Mountain View"
