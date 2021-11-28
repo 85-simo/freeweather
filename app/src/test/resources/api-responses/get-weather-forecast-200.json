@@ -1,42 +1,70 @@
 {
-  "coord": {
-    "lon": -122.08,
-    "lat": 37.39
+  "lat": 51.5099,
+  "lon": -0.1181,
+  "timezone": "Europe/London",
+  "timezone_offset": 0,
+  "current": {
+    "dt": 1638125904,
+    "sunrise": 1638085190,
+    "sunset": 1638115049,
+    "temp": 2.6,
+    "feels_like": -0.82,
+    "pressure": 1007,
+    "humidity": 65,
+    "dew_point": -2.93,
+    "uvi": 0,
+    "clouds": 100,
+    "visibility": 10000,
+    "wind_speed": 3.6,
+    "wind_deg": 300,
+    "weather": [
+      {
+        "id": 804,
+        "main": "Clouds",
+        "description": "overcast clouds",
+        "icon": "04n"
+      }
+    ]
   },
-  "weather": [{
-    "id": 800,
-    "main": "Clear",
-    "description": "clear sky",
-    "icon": "01d"
-  }],
-  "base": "stations",
-  "main": {
-    "temp": 282.55,
-    "feels_like": 281.86,
-    "temp_min": 280.37,
-    "temp_max": 284.26,
-    "pressure": 1023,
-    "humidity": 100
-  },
-  "visibility": 16093,
-  "wind": {
-    "speed": 1.5,
-    "deg": 350
-  },
-  "clouds": {
-    "all": 1
-  },
-  "dt": 1560350645,
-  "sys": {
-    "type": 1,
-    "id": 5122,
-    "message": 0.0139,
-    "country": "US",
-    "sunrise": 1560343627,
-    "sunset": 1560396563
-  },
-  "timezone": -25200,
-  "id": 420006353,
-  "name": "Mountain View",
-  "cod": 200
+  "daily": [
+    {
+      "dt": 1638097200,
+      "sunrise": 1638085190,
+      "sunset": 1638115049,
+      "moonrise": 0,
+      "moonset": 1638106980,
+      "moon_phase": 0.78,
+      "temp": {
+        "day": 2.92,
+        "min": 0.81,
+        "max": 4.32,
+        "night": 1.61,
+        "eve": 2.89,
+        "morn": 1.41
+      },
+      "feels_like": {
+        "day": -1.33,
+        "night": -1.84,
+        "eve": -0.13,
+        "morn": -3.89
+      },
+      "pressure": 1006,
+      "humidity": 56,
+      "dew_point": -5.14,
+      "wind_speed": 7.64,
+      "wind_deg": 334,
+      "wind_gust": 15.7,
+      "weather": [
+        {
+          "id": 803,
+          "main": "Clouds",
+          "description": "broken clouds",
+          "icon": "04d"
+        }
+      ],
+      "clouds": 65,
+      "pop": 0.13,
+      "uvi": 0.58
+    }
+  ]
 }

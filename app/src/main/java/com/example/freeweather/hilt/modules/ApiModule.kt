@@ -14,6 +14,7 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
@@ -26,7 +27,7 @@ private const val REST_CLIENT_WRITE_TIMEOUT_SECONDS = 20L
 private const val REST_CLIENT_READ_TIMEOUT_SECONDS = 20L
 private const val API_CACHE_DIR = "api_cache"
 private const val API_CACHE_SIZE = 10 * 1024L * 1024L // 10 MiB
-private const val BASE_URL = "http://api.openweathermap.org"
+private const val BASE_URL = "https://api.openweathermap.org"
 private const val API_KEY_PARAM_NAME = "appid"
 private const val API_KEY_VALUE = "0db5caf45f1986305c1379cb056d6d34"
 
@@ -41,7 +42,7 @@ abstract class ApiModule {
     companion object {
         @Provides
         @Singleton
-        fun provideHttpLoggingInterceptor() = Interceptor { chain ->
+        fun provideInterceptor() = Interceptor { chain ->
             val originalReq = chain.request()
             val originalUrl = originalReq.url
             val newUrl = originalUrl.newBuilder()
@@ -55,6 +56,12 @@ abstract class ApiModule {
 
         @Provides
         @Singleton
+        fun provideHttpLoggingInterceptor() = HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+
+        @Provides
+        @Singleton
         fun provideApiCache(context: Context): Cache {
             val cacheFile = File("${context.cacheDir.absolutePath}${File.pathSeparator}$API_CACHE_DIR")
             return Cache(cacheFile, API_CACHE_SIZE)
@@ -62,11 +69,12 @@ abstract class ApiModule {
 
         @Provides
         @Singleton
-        fun provideHttpClient(interceptor: Interceptor, apiCache: Cache) = OkHttpClient.Builder()
+        fun provideHttpClient(interceptor: Interceptor, httpLoggingInterceptor: HttpLoggingInterceptor, apiCache: Cache) = OkHttpClient.Builder()
             .connectTimeout(REST_CLIENT_CONNECTION_TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .readTimeout(REST_CLIENT_READ_TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .writeTimeout(REST_CLIENT_WRITE_TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .cache(apiCache)
+            .addInterceptor(httpLoggingInterceptor)
             .addInterceptor(interceptor)
             .build()
 

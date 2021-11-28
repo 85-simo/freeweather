@@ -35,9 +35,10 @@ class RestClientTest {
     @Before
     fun setUp() {
         whenever(mockContext.cacheDir).thenReturn(tempFolder.root)
-        val interceptor = ApiModule.provideHttpLoggingInterceptor()
+        val interceptor = ApiModule.provideInterceptor()
+        val httpInterceptor = ApiModule.provideHttpLoggingInterceptor()
         val cache = ApiModule.provideApiCache(mockContext)
-        val client = ApiModule.provideHttpClient(interceptor, cache)
+        val client = ApiModule.provideHttpClient(interceptor, httpInterceptor, cache)
             .newBuilder()
             .readTimeout(1, TimeUnit.SECONDS)
             .writeTimeout(1, TimeUnit.SECONDS)
@@ -63,21 +64,7 @@ class RestClientTest {
         mockWebServer.enqueueResponse(WEATHER_SUCCESS_RESPONSE, 200)
         runBlocking {
             val actual = restClient.getWeatherForecast(37.39, -122.08)
-            val expected = ForecastDTO(
-                CoordDTO( 37.39, -122.08),
-                listOf(WeatherDTO(800, "Clear", "clear sky", "01d")),
-                MainDTO(282.55, 281.86, 280.37, 284.26, 1023.0, 100.0),
-                16093.0,
-                WindDTO(1.5, 350.0),
-                CloudsDTO(1.0),
-                rain = null,
-                snow = null,
-                1560350645L,
-                SysDTO("US", 1560343627L, 1560396563L),
-                -25200L,
-                420006353L,
-                "Mountain View"
-            )
+            val expected = getExpectedForecastDTO()
             assertEquals(expected, actual)
         }
     }
@@ -119,4 +106,76 @@ class RestClientTest {
         val apiKey = request.requestUrl?.queryParameter(API_KEY_QUERY_PARAM)
         assertNotNull(apiKey)
     }
+
+    private fun getExpectedForecastDTO() = ForecastDTO(
+        lat = 51.5099,
+        lon = -0.1181,
+        timezone = "Europe/London",
+        timezoneOffsetSeconds = 0,
+        current = CurrentDTO(
+            dtSeconds = 1638125904,
+            sunriseSeconds = 1638085190,
+            sunsetSeconds = 1638115049,
+            temp = 2.6F,
+            feelsLike = -0.82F,
+            pressure = 1007,
+            humidity = 65,
+            dewPoint = -2.93F,
+            uvi = 0F,
+            clouds = 100,
+            visibility = 10_000,
+            windSpeed = 3.6F,
+            windDeg = 300,
+            weather = listOf(WeatherDTO(
+                id = 804L,
+                main = "Clouds",
+                description = "overcast clouds",
+                icon = "04n"
+            )),
+            rain = null,
+            snow = null,
+            windGust = null
+        ),
+        daily = listOf(
+            DailyDTO(
+                dtSeconds = 1638097200L,
+                sunriseSeconds = 1638085190L,
+                sunsetSeconds = 1638115049L,
+                moonriseSeconds = 0L,
+                moonsetSeconds = 1638106980L,
+                moonPhase = 0.78F,
+                TempDTO(
+                    day = 2.92F,
+                    min = 0.81F,
+                    max = 4.32F,
+                    night = 1.61F,
+                    eve = 2.89F,
+                    morn = 1.41F
+                ),
+                FeelsLikeDTO(
+                    day = -1.33F,
+                    night = -1.84F,
+                    eve = -0.13F,
+                    morn = -3.89F
+                ),
+                pressure = 1006,
+                humidity = 56,
+                dewPoint = -5.14F,
+                windSpeed = 7.64F,
+                windDeg = 334,
+                windGust = 15.7F,
+                weather = listOf(WeatherDTO(
+                    id = 803L,
+                    main = "Clouds",
+                    description = "broken clouds",
+                    icon = "04d"
+                )),
+                clouds = 65,
+                pop = 0.13F,
+                uvi = 0.58F,
+                rain = null,
+                snow = null
+            )
+        )
+    )
 }
