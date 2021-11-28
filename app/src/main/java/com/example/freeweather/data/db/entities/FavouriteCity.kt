@@ -31,14 +31,14 @@ data class FavouriteCity(
 @Dao
 interface FavouriteCityDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(favouriteCity: FavouriteCity)
+    suspend fun insert(favouriteCity: FavouriteCity)
 
     @Delete
-    fun delete(favouriteCity: FavouriteCity)
+    suspend fun delete(favouriteCity: FavouriteCity)
 
     @Query("SELECT * FROM $TABLE_NAME")
-    fun getAll(): List<FavouriteCity>
+    suspend fun getAll(): List<FavouriteCity>
 
     @Query("SELECT * FROM $TABLE_NAME WHERE $COL_NAME = :name AND $COL_STATE = :state AND $COL_COUNTRY = :country")
-    fun getBy(name: String, state: String?, country: String): List<FavouriteCity>
+    suspend fun getBy(name: String, state: String?, country: String): List<FavouriteCity>
 }
