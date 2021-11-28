@@ -1,6 +1,7 @@
 package com.example.freeweather.data.db.entities
 
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 
 private const val TABLE_NAME = "favourite_cities"
 private const val COL_UID = "uid"
@@ -37,8 +38,5 @@ interface FavouriteCityDao {
     suspend fun delete(favouriteCity: FavouriteCity)
 
     @Query("SELECT * FROM $TABLE_NAME")
-    suspend fun getAll(): List<FavouriteCity>
-
-    @Query("SELECT * FROM $TABLE_NAME WHERE $COL_NAME = :name AND $COL_STATE = :state AND $COL_COUNTRY = :country")
-    suspend fun getBy(name: String, state: String?, country: String): List<FavouriteCity>
+    fun getAll(): Flow<List<FavouriteCity>>
 }

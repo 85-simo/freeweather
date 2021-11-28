@@ -7,13 +7,16 @@ import com.example.freeweather.data.db.AppDatabase
 import com.example.freeweather.data.db.entities.FavouriteCity
 import com.example.freeweather.domain.City
 import com.example.freeweather.domain.Weather
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 interface Repository {
-    suspend fun getCityByName(cityName: String): List<City>
+    suspend fun getCitiesByName(cityName: String): List<City>
     suspend fun getWeatherByCoordinates(lat: Double, lon: Double): Weather
     suspend fun saveFavouriteCity(city: City)
-    suspend fun getFavouriteCities(): List<City>
+    fun getFavouriteCities(): Flow<List<City>>
     suspend fun deleteFavouriteCity(city: City)
 }
 
@@ -22,13 +25,20 @@ internal class RepositoryImpl @Inject constructor(
     private val dbClient: AppDatabase
     ) : Repository {
 
-    override suspend fun getCityByName(cityName: String) = restClient.getCityLatLon(cityName).map { it.toDomain() }
+    override suspend fun getCitiesByName(cityName: String) = restClient.getCityLatLon(cityName).map { it.toDomain() }
 
     override suspend fun getWeatherByCoordinates(lat: Double, lon: Double) = restClient.getWeatherForecast(lat, lon).toDomain()
 
     override suspend fun saveFavouriteCity(city: City) = dbClient.favouriteCityDao().insert(city.toData())
 
-    override suspend fun getFavouriteCities(): List<City> = dbClient.favouriteCityDao().getAll().map { it.toDomain() }
+    override fun getFavouriteCities(): Flow<List<City>> = dbClient.favouriteCityDao()
+        .getAll()
+        .distinctUntilChanged()
+        .map { cities ->
+            cities.map { city ->
+                city.toDomain()
+            }
+        }
 
     override suspend fun deleteFavouriteCity(city: City) = dbClient.favouriteCityDao().delete(city.toData())
 
