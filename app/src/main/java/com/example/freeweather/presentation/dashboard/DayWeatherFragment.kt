@@ -52,6 +52,7 @@ class DayWeatherFragment : BaseFragment<FragmentDayWeatherBinding>() {
         dayWeatherViewModel.viewStateStream.observe(viewLifecycleOwner) { viewState ->
             binding.titlebar.title = viewState.locationName
             weatherAdapter.submitList(viewState.weatherInfo)
+            weatherAdapter.setFavouriteLocation(viewState.locationFavourite)
         }
         dayWeatherViewModel.commands.observe(viewLifecycleOwner) { command ->
             when (command) {

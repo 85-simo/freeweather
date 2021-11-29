@@ -69,13 +69,14 @@ interface DayWeatherViewModel {
 
     data class ViewState(
         val locationName: String,
+        val locationFavourite: Boolean,
         val weatherInfo: List<WeatherInfo>
     )
 
     val commands: LiveData<Command>
     val viewStateStream: LiveData<ViewState>
 
-    fun locationSet(locationName: String, lat: Double, lon: Double)
+    fun locationSet(locationCommaSeparated: String, lat: Double, lon: Double)
     fun searchClicked()
     fun favouriteToggleClicked(favourite: Boolean)
 }
@@ -94,14 +95,20 @@ internal class DayWeatherViewModelImpl @Inject constructor(
     }
 
     override fun locationSet(locationCommaSeparated: String, lat: Double, lon: Double) {
-        val locationParts = locationCommaSeparated.split(",")
-        val locationName = locationParts[0]
-        val locationState = if (locationParts.size == 3) locationParts[1] else null
-        val locationCountry = if (locationParts.size == 3) locationParts[2] else locationParts[1]
-        currentLocation = City(name = locationName, state = locationState, country = locationCountry, latitude = lat, longitude = lon)
         viewModelScope.launch(Dispatchers.IO) {
             val weatherForecast = repository.getWeatherByCoordinates(lat, lon)
-            viewStateStream.postValue(ViewState(locationName, weatherForecast.toWeatherInfo()))
+            var isFavourite = false
+            repository.getFavouriteCityByCoordinates(lat, lon)?.let {
+                isFavourite = true
+                currentLocation = it
+            } ?: run {
+                val locationParts = locationCommaSeparated.split(",")
+                val locationName = locationParts[0]
+                val locationState = if (locationParts.size == 3) locationParts[1] else null
+                val locationCountry = if (locationParts.size == 3) locationParts[2] else locationParts[1]
+                currentLocation = City(name = locationName, state = locationState, country = locationCountry, latitude = lat, longitude = lon)
+            }
+            viewStateStream.postValue(ViewState(locationCommaSeparated, isFavourite, weatherForecast.toWeatherInfo()))
         }
     }
 
@@ -112,8 +119,7 @@ internal class DayWeatherViewModelImpl @Inject constructor(
     override fun favouriteToggleClicked(favourite: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             if (favourite) {
-                val id = repository.saveFavouriteCity(currentLocation)
-                currentLocation = currentLocation.copy(id = id)
+                repository.saveFavouriteCity(currentLocation)
             } else {
                 repository.deleteFavouriteCity(currentLocation)
             }

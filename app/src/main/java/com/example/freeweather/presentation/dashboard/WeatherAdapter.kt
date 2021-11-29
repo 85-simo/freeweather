@@ -15,6 +15,7 @@ private const val ITEM_VIEW_TYPE_HEADER = 0
 private const val ITEM_VIEW_TYPE_ITEM = 1
 
 class WeatherAdapter(private var dailyWeatherInfoList: List<WeatherInfo>, private val favouriteToggleClickListener: (Boolean) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private var isFavouriteLocation = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -28,7 +29,7 @@ class WeatherAdapter(private var dailyWeatherInfoList: List<WeatherInfo>, privat
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val currentItem = dailyWeatherInfoList[position]
         when (holder) {
-            is CurrentWeatherViewHolder -> holder.bind(currentItem as CurrentWeatherInfo, favouriteToggleClickListener)
+            is CurrentWeatherViewHolder -> holder.bind(currentItem as CurrentWeatherInfo, isFavouriteLocation, favouriteToggleClickListener)
             is DailyWeatherViewHolder -> holder.bind(currentItem as DailyWeatherInfo)
         }
     }
@@ -46,10 +47,15 @@ class WeatherAdapter(private var dailyWeatherInfoList: List<WeatherInfo>, privat
         this.dailyWeatherInfoList = dailyWeatherInfoList
         notifyDataSetChanged()
     }
+
+    fun setFavouriteLocation(favourite: Boolean) {
+        isFavouriteLocation = favourite
+        notifyItemChanged(0)
+    }
 }
 
-private class CurrentWeatherViewHolder(private val binding: CurrentWeatherItemBinding, ) : RecyclerView.ViewHolder(binding.root) {
-    fun bind(weatherInfo: CurrentWeatherInfo, favouriteToggleClickListener: (Boolean) -> Unit) {
+private class CurrentWeatherViewHolder(private val binding: CurrentWeatherItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    fun bind(weatherInfo: CurrentWeatherInfo, isFavouriteLocation: Boolean, favouriteToggleClickListener: (Boolean) -> Unit) {
         with(binding) {
             datetime.text = weatherInfo.dateAndTime
             currentWeatherDesc.text = weatherInfo.description
@@ -68,6 +74,7 @@ private class CurrentWeatherViewHolder(private val binding: CurrentWeatherItemBi
                 .load(weatherInfo.weatherIconUrl)
                 .resizeDimen(R.dimen.weather_icon_size, R.dimen.weather_icon_size)
                 .into(currentWeatherIcon)
+            favouriteButton.isChecked = isFavouriteLocation
             favouriteButton.setOnCheckedChangeListener { _, isChecked ->
                 favouriteToggleClickListener.invoke(isChecked)
             }

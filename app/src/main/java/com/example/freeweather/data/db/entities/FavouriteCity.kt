@@ -4,7 +4,6 @@ import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 
 private const val TABLE_NAME = "favourite_cities"
-private const val COL_UID = "uid"
 private const val COL_NAME = "name"
 private const val COL_STATE = "state"
 private const val COL_COUNTRY = "country"
@@ -12,11 +11,8 @@ private const val COL_LATITUDE = "lat"
 private const val COL_LONGITUDE = "lon"
 
 
-@Entity(tableName = TABLE_NAME)
+@Entity(tableName = TABLE_NAME, primaryKeys = [COL_LATITUDE, COL_LONGITUDE])
 data class FavouriteCity(
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = COL_UID)
-    val uid: Long,
     @ColumnInfo(name = COL_NAME)
     val name: String,
     @ColumnInfo(name = COL_STATE)
@@ -31,12 +27,15 @@ data class FavouriteCity(
 
 @Dao
 interface FavouriteCityDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(favouriteCity: FavouriteCity): Long
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insert(favouriteCity: FavouriteCity)
 
     @Delete
     suspend fun delete(favouriteCity: FavouriteCity)
 
     @Query("SELECT * FROM $TABLE_NAME")
     fun getAll(): Flow<List<FavouriteCity>>
+
+    @Query("SELECT * FROM $TABLE_NAME WHERE $COL_LATITUDE = :latitude AND $COL_LONGITUDE = :longitude")
+    suspend fun getFavouriteCityByCoordinates(latitude: Double, longitude: Double): FavouriteCity?
 }

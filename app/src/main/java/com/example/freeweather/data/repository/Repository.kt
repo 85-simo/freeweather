@@ -19,9 +19,10 @@ import javax.inject.Inject
 interface Repository {
     suspend fun getCitiesByName(cityName: String): List<City>
     suspend fun getWeatherByCoordinates(lat: Double, lon: Double): WeatherForecast
-    suspend fun saveFavouriteCity(city: City): Long
+    suspend fun saveFavouriteCity(city: City)
     fun getFavouriteCities(): Flow<List<City>>
     suspend fun deleteFavouriteCity(city: City)
+    suspend fun getFavouriteCityByCoordinates(latitude: Double, longitude: Double): City?
 }
 
 internal class RepositoryImpl @Inject constructor(
@@ -33,7 +34,9 @@ internal class RepositoryImpl @Inject constructor(
 
     override suspend fun getWeatherByCoordinates(lat: Double, lon: Double) = restClient.getWeatherForecast(lat, lon).toDomain()
 
-    override suspend fun saveFavouriteCity(city: City) = dbClient.favouriteCityDao().insert(city.toData())
+    override suspend fun saveFavouriteCity(city: City) {
+        dbClient.favouriteCityDao().insert(city.toData())
+    }
 
     override fun getFavouriteCities(): Flow<List<City>> = dbClient.favouriteCityDao()
         .getAll()
@@ -45,6 +48,8 @@ internal class RepositoryImpl @Inject constructor(
         }
 
     override suspend fun deleteFavouriteCity(city: City) = dbClient.favouriteCityDao().delete(city.toData())
+
+    override suspend fun getFavouriteCityByCoordinates(latitude: Double, longitude: Double) = dbClient.favouriteCityDao().getFavouriteCityByCoordinates(latitude, longitude)?.toDomain()
 
 }
 
@@ -86,6 +91,6 @@ private fun ForecastDTO.toDomain() = WeatherForecast(
     }
 )
 
-private fun FavouriteCity.toDomain() = City(uid, name, state, country, latitude, longitude)
+private fun FavouriteCity.toDomain() = City(name, state, country, latitude, longitude)
 
-private fun City.toData() = FavouriteCity(id, name, state, country, latitude, longitude)
+private fun City.toData() = FavouriteCity(name, state, country, latitude, longitude)

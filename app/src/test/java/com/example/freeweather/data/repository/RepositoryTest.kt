@@ -19,7 +19,6 @@ import org.mockito.kotlin.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-private const val LOCATION_ID = 352652L
 private const val LOCATION_NAME = "Test"
 private const val LOCATION_LATITUDE = 12.6
 private const val LOCATION_LONGITUDE = 32.4
@@ -75,7 +74,6 @@ class RepositoryTest {
     fun testGetCitiesByName() {
         runBlocking {
             val expected = listOf(City(
-                id = 0,
                 LOCATION_NAME,
                 LOCATION_STATE,
                 LOCATION_COUNTRY,
@@ -217,7 +215,6 @@ class RepositoryTest {
     )
 
     private fun getFavouriteCity() = FavouriteCity(
-        LOCATION_ID,
         LOCATION_NAME,
         LOCATION_STATE,
         LOCATION_COUNTRY,
@@ -231,7 +228,6 @@ class RepositoryTest {
     )
 
     private fun getExpectedCity() = City(
-        LOCATION_ID,
         LOCATION_NAME,
         LOCATION_STATE,
         LOCATION_COUNTRY,

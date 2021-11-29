@@ -2,18 +2,12 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "6e0f1a63abdb18632a080ffbf2e891d1",
+    "identityHash": "5ea9f1be964770a6aac93905410f8987",
     "entities": [
       {
         "tableName": "favourite_cities",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uid` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `state` TEXT, `country` TEXT NOT NULL, `lat` REAL NOT NULL, `lon` REAL NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `state` TEXT, `country` TEXT NOT NULL, `lat` REAL NOT NULL, `lon` REAL NOT NULL, PRIMARY KEY(`lat`, `lon`))",
         "fields": [
-          {
-            "fieldPath": "uid",
-            "columnName": "uid",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
           {
             "fieldPath": "name",
             "columnName": "name",
@@ -47,9 +41,10 @@
         ],
         "primaryKey": {
           "columnNames": [
-            "uid"
+            "lat",
+            "lon"
           ],
-          "autoGenerate": true
+          "autoGenerate": false
         },
         "indices": [],
         "foreignKeys": []
@@ -58,7 +53,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6e0f1a63abdb18632a080ffbf2e891d1')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5ea9f1be964770a6aac93905410f8987')"
     ]
   }
 }
