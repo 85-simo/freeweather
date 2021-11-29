@@ -10,7 +10,6 @@ import com.example.freeweather.domain.CurrentWeather
 import com.example.freeweather.domain.WeatherForecast
 import com.example.freeweather.domain.WeatherPrediction
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Before

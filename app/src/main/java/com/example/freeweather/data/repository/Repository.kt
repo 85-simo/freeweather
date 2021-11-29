@@ -9,9 +9,6 @@ import com.example.freeweather.domain.City
 import com.example.freeweather.domain.CurrentWeather
 import com.example.freeweather.domain.WeatherForecast
 import com.example.freeweather.domain.WeatherPrediction
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject

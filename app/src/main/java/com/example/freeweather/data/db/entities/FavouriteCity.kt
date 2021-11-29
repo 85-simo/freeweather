@@ -1,7 +1,6 @@
 package com.example.freeweather.data.db.entities
 
 import androidx.room.*
-import kotlinx.coroutines.flow.Flow
 
 private const val TABLE_NAME = "favourite_cities"
 private const val COL_NAME = "name"

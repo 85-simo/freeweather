@@ -14,7 +14,7 @@ import com.squareup.picasso.Picasso
 private const val ITEM_VIEW_TYPE_HEADER = 0
 private const val ITEM_VIEW_TYPE_ITEM = 1
 
-class WeatherAdapter(private var dailyWeatherInfoList: List<WeatherInfo>, private val favouriteToggleClickListener: (Boolean) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class WeatherAdapter(private var dailyWeatherInfoList: List<WeatherInfo>, private val favouriteToggleClickListener: () -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var isFavouriteLocation = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -55,7 +55,7 @@ class WeatherAdapter(private var dailyWeatherInfoList: List<WeatherInfo>, privat
 }
 
 private class CurrentWeatherViewHolder(private val binding: CurrentWeatherItemBinding) : RecyclerView.ViewHolder(binding.root) {
-    fun bind(weatherInfo: CurrentWeatherInfo, isFavouriteLocation: Boolean, favouriteToggleClickListener: (Boolean) -> Unit) {
+    fun bind(weatherInfo: CurrentWeatherInfo, isFavouriteLocation: Boolean, favouriteToggleClickListener: () -> Unit) {
         with(binding) {
             datetime.text = weatherInfo.dateAndTime
             currentWeatherDesc.text = weatherInfo.description
@@ -74,9 +74,10 @@ private class CurrentWeatherViewHolder(private val binding: CurrentWeatherItemBi
                 .load(weatherInfo.weatherIconUrl)
                 .resizeDimen(R.dimen.weather_icon_size, R.dimen.weather_icon_size)
                 .into(currentWeatherIcon)
-            favouriteButton.isChecked = isFavouriteLocation
-            favouriteButton.setOnCheckedChangeListener { _, isChecked ->
-                favouriteToggleClickListener.invoke(isChecked)
+            val favouriteImageRes = if (isFavouriteLocation) R.drawable.ic_baseline_favorite_24 else R.drawable.ic_baseline_favorite_border_24
+            favouriteButton.setImageResource(favouriteImageRes)
+            favouriteButton.setOnClickListener {
+                favouriteToggleClickListener.invoke()
             }
         }
     }

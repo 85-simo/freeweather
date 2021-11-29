@@ -78,7 +78,7 @@ interface DayWeatherViewModel {
 
     fun locationSet(locationCommaSeparated: String, lat: Double, lon: Double)
     fun searchClicked()
-    fun favouriteToggleClicked(favourite: Boolean)
+    fun favouriteToggleClicked()
 }
 
 @HiltViewModel
@@ -116,12 +116,17 @@ internal class DayWeatherViewModelImpl @Inject constructor(
         commands.value = Navigate(Destination.LOCATION_SEARCH)
     }
 
-    override fun favouriteToggleClicked(favourite: Boolean) {
+    override fun favouriteToggleClicked() {
+        val currentViewState = viewStateStream.value
+        val wasFavourite = currentViewState?.locationFavourite ?: false
         viewModelScope.launch(Dispatchers.IO) {
-            if (favourite) {
-                repository.saveFavouriteCity(currentLocation)
-            } else {
+            if (wasFavourite) {
                 repository.deleteFavouriteCity(currentLocation)
+            } else {
+                repository.saveFavouriteCity(currentLocation)
+            }
+            currentViewState?.let {
+                viewStateStream.postValue(currentViewState.copy(locationFavourite = !wasFavourite))
             }
         }
     }
