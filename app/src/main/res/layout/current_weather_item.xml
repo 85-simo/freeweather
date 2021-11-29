@@ -36,6 +36,14 @@
         android:textSize="@dimen/text_size_normal"
         tools:text="29 November, 01:11"/>
 
+    <CheckBox android:id="@+id/favourite_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/datetime"
+        app:layout_constraintEnd_toStartOf="@id/end_guide"
+        android:button="@drawable/favourite_checkable_button" />
+
+
     <ImageView android:id="@+id/current_weather_icon"
         android:layout_width="@dimen/weather_icon_size"
         android:layout_height="@dimen/weather_icon_size"
