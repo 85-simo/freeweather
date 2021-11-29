@@ -98,6 +98,12 @@ dependencies {
 
     // endregion
 
+    // region imaging
+
+    implementation 'com.squareup.picasso:picasso:2.71828'
+
+    // endregion
+
     // region unit tests
 
     testImplementation 'junit:junit:4.13.2'
