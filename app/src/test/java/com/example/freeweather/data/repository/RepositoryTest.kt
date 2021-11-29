@@ -9,7 +9,6 @@ import com.example.freeweather.domain.City
 import com.example.freeweather.domain.CurrentWeather
 import com.example.freeweather.domain.WeatherForecast
 import com.example.freeweather.domain.WeatherPrediction
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -63,7 +62,7 @@ class RepositoryTest {
             onBlocking { getWeatherForecast(any(), any()) } doReturn getWeatherForecast()
         }
         mockCityDao.stub {
-            onBlocking { getAll() } doReturn flowOf(getFavouriteCities())
+            onBlocking { getAll() } doReturn getFavouriteCities()
         }
         whenever(mockDbClient.favouriteCityDao()).thenReturn(mockCityDao)
         repository = RepositoryImpl(mockRestClient, mockDbClient)
@@ -117,7 +116,7 @@ class RepositoryTest {
 
     @Test
     fun testGetFavouriteCities() {
-        val expected = listOf(getExpectedCities())
+        val expected = getExpectedCities()
         runBlocking {
             val actual = repository.getFavouriteCities()
                 .toList()

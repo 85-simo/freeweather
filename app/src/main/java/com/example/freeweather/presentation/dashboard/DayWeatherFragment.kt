@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.freeweather.NavGraphDirections
 import com.example.freeweather.R
 import com.example.freeweather.databinding.FragmentDayWeatherBinding
 import com.example.freeweather.presentation.BaseFragment
@@ -60,6 +61,10 @@ class DayWeatherFragment : BaseFragment<FragmentDayWeatherBinding>() {
                     when (command.destination) {
                         LOCATION_SEARCH -> findNavController().navigate(R.id.action_dayWeatherFragment_to_searchFragment)
                     }
+                }
+                is DayWeatherViewModel.Command.ShowDialog -> {
+                    val action = NavGraphDirections.actionGlobalSimpleDialogFragment(command.titleResId, command.contentResId)
+                    findNavController().navigate(action)
                 }
             }
         }

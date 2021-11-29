@@ -1,9 +1,11 @@
 package com.example.freeweather.presentation.dashboard
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.freeweather.R
 import com.example.freeweather.data.repository.Repository
 import com.example.freeweather.domain.City
 import com.example.freeweather.domain.CurrentWeather
@@ -12,6 +14,7 @@ import com.example.freeweather.domain.WeatherPrediction
 import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.Command
 import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.Command.Navigate
 import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.Command.Navigate.Destination
+import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.Command.ShowDialog
 import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.ViewState
 import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.WeatherInfo.CurrentWeatherInfo
 import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.WeatherInfo.DailyWeatherInfo
@@ -19,6 +22,7 @@ import com.hadilq.liveevent.LiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -33,6 +37,7 @@ private const val DEFAULT_LOCATION_LON = -0.118092
 
 interface DayWeatherViewModel {
     sealed class Command {
+        data class ShowDialog(@StringRes val titleResId: Int, @StringRes val contentResId: Int) : Command()
         data class Navigate(val destination: Destination) : Command() {
             enum class Destination {
                 LOCATION_SEARCH
@@ -96,19 +101,26 @@ internal class DayWeatherViewModelImpl @Inject constructor(
 
     override fun locationSet(locationCommaSeparated: String, lat: Double, lon: Double) {
         viewModelScope.launch(Dispatchers.IO) {
-            val weatherForecast = repository.getWeatherByCoordinates(lat, lon)
-            var isFavourite = false
-            repository.getFavouriteCityByCoordinates(lat, lon)?.let {
-                isFavourite = true
-                currentLocation = it
-            } ?: run {
-                val locationParts = locationCommaSeparated.split(",")
-                val locationName = locationParts[0]
-                val locationState = if (locationParts.size == 3) locationParts[1] else null
-                val locationCountry = if (locationParts.size == 3) locationParts[2] else locationParts[1]
-                currentLocation = City(name = locationName, state = locationState, country = locationCountry, latitude = lat, longitude = lon)
+            try {
+                val weatherForecast = repository.getWeatherByCoordinates(lat, lon)
+                var isFavourite = false
+                repository.getFavouriteCityByCoordinates(lat, lon)?.let {
+                    isFavourite = true
+                    currentLocation = it
+                } ?: run {
+                    val locationParts = locationCommaSeparated.split(",")
+                    val locationName = locationParts[0]
+                    val locationState = if (locationParts.size == 3) locationParts[1] else null
+                    val locationCountry =
+                        if (locationParts.size == 3) locationParts[2] else locationParts[1]
+                    currentLocation = City(name = locationName, state = locationState, country = locationCountry, latitude = lat, longitude = lon)
+                }
+                viewStateStream.postValue(
+                    ViewState(locationCommaSeparated, isFavourite, weatherForecast.toWeatherInfo())
+                )
+            } catch (e: Exception) {
+                commands.postValue(ShowDialog(R.string.generic_error_title, R.string.generic_error_content))
             }
-            viewStateStream.postValue(ViewState(locationCommaSeparated, isFavourite, weatherForecast.toWeatherInfo()))
         }
     }
 
@@ -120,13 +132,17 @@ internal class DayWeatherViewModelImpl @Inject constructor(
         val currentViewState = viewStateStream.value
         val wasFavourite = currentViewState?.locationFavourite ?: false
         viewModelScope.launch(Dispatchers.IO) {
-            if (wasFavourite) {
-                repository.deleteFavouriteCity(currentLocation)
-            } else {
-                repository.saveFavouriteCity(currentLocation)
-            }
-            currentViewState?.let {
-                viewStateStream.postValue(currentViewState.copy(locationFavourite = !wasFavourite))
+            try {
+                if (wasFavourite) {
+                    repository.deleteFavouriteCity(currentLocation)
+                } else {
+                    repository.saveFavouriteCity(currentLocation)
+                }
+                currentViewState?.let {
+                    viewStateStream.postValue(currentViewState.copy(locationFavourite = !wasFavourite))
+                }
+            } catch (e: Exception) {
+                commands.postValue(ShowDialog(R.string.generic_error_title, R.string.generic_error_content))
             }
         }
     }

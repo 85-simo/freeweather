@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">FreeWeather</string>
     <string name="menu_search_desc">Search</string>
-    <string name="search_hint">Enter a location...</string>
+    <string name="search_hint">Enter a location&#8230;</string>
+    <string name="generic_error_title">Error</string>
+    <string name="generic_error_content">Oops, something went wrong! Please try again later.</string>
+    <string name="ok">OK</string>
 </resources>

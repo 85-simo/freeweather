@@ -17,6 +17,8 @@ import com.example.freeweather.presentation.BaseFragment
 import com.example.freeweather.presentation.dashboard.DayWeatherViewModel
 import com.example.freeweather.presentation.dashboard.DayWeatherViewModelImpl
 import com.example.freeweather.presentation.search.SearchViewModel.Command.SelectLocation
+import com.example.freeweather.presentation.search.SearchViewModel.Command.ShowDialog
+import com.example.freeweather.presentation.utils.SimpleDialogFragmentDirections
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -54,6 +56,10 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
                 is SelectLocation -> {
                     dayWeatherViewModel.locationSet(command.locationName, command.latitude, command.longitude)
                     findNavController().popBackStack()
+                }
+                is ShowDialog -> {
+                    val action = SimpleDialogFragmentDirections.actionGlobalSimpleDialogFragment(command.titleResId, command.contentResId)
+                    findNavController().navigate(action)
                 }
             }
         }

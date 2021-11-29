@@ -1,13 +1,16 @@
 package com.example.freeweather.presentation.search
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.freeweather.R
 import com.example.freeweather.data.repository.Repository
 import com.example.freeweather.domain.City
 import com.example.freeweather.presentation.search.SearchViewModel.*
 import com.example.freeweather.presentation.search.SearchViewModel.Command.SelectLocation
+import com.example.freeweather.presentation.search.SearchViewModel.Command.ShowDialog
 import com.hadilq.liveevent.LiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -19,6 +22,7 @@ private const val MIN_SEARCH_QUERY_LENGTH = 2
 interface SearchViewModel {
     sealed class Command {
         data class SelectLocation(val locationName: String, val latitude: Double, val longitude: Double) : Command()
+        data class ShowDialog(@StringRes val titleResId: Int, @StringRes val contentResId: Int) : Command()
     }
 
     data class SearchResult(
@@ -46,25 +50,35 @@ internal class SearchViewModelImpl @Inject constructor(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            val favouriteLocations = getListOfFavouriteLocations()
-            viewState.postValue(ViewState(favouriteLocations))
+            try {
+                val favouriteLocations = getListOfFavouriteLocations()
+                viewState.postValue(ViewState(favouriteLocations))
+            } catch (e: Exception) {
+                commands.postValue(ShowDialog(R.string.generic_error_title, R.string.generic_error_content))
+            }
         }
     }
 
     override fun locationSearchSubmitted(searchString: String) {
-        if (searchString.length > MIN_SEARCH_QUERY_LENGTH) {
-            viewModelScope.launch(Dispatchers.IO) {
-                val cities = repository.getCitiesByName(searchString)
-                val searchResults = cities.map { it.toSearchResult() }
-                viewState.postValue(ViewState(searchResults))
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                when {
+                    searchString.length > MIN_SEARCH_QUERY_LENGTH -> {
+                        val cities = repository.getCitiesByName(searchString)
+                        val searchResults = cities.map { it.toSearchResult() }
+                        viewState.postValue(ViewState(searchResults))
+                    }
+                    searchString.isEmpty() -> {
+                        val favouriteLocations = getListOfFavouriteLocations()
+                        viewState.postValue(ViewState(favouriteLocations))
+                    }
+                    else -> {
+                        viewState.postValue(ViewState(emptyList()))
+                    }
+                }
+            } catch (e: Exception) {
+                commands.postValue(ShowDialog(R.string.generic_error_title, R.string.generic_error_content))
             }
-        } else if (searchString.isEmpty()) {
-            viewModelScope.launch(Dispatchers.IO) {
-                val favouriteLocations = getListOfFavouriteLocations()
-                viewState.postValue(ViewState(favouriteLocations))
-            }
-        } else {
-            viewState.postValue(ViewState(emptyList()))
         }
     }
 
