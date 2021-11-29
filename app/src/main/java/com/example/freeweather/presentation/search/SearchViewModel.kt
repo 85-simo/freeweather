@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.freeweather.data.repository.Repository
 import com.example.freeweather.domain.City
 import com.example.freeweather.presentation.search.SearchViewModel.*
+import com.example.freeweather.presentation.search.SearchViewModel.Command.SelectLocation
 import com.hadilq.liveevent.LiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +18,7 @@ private const val MIN_SEARCH_QUERY_LENGTH = 2
 
 interface SearchViewModel {
     sealed class Command {
-        object NavigateBack : Command()
+        data class SelectLocation(val locationName: String, val latitude: Double, val longitude: Double) : Command()
     }
 
     data class SearchResult(
@@ -33,6 +34,7 @@ interface SearchViewModel {
     val viewState: LiveData<ViewState>
 
     fun locationSearchSubmitted(searchString: String)
+    fun locationSelected(searchResult: SearchResult)
 }
 
 @HiltViewModel
@@ -52,6 +54,11 @@ internal class SearchViewModelImpl @Inject constructor(
         } else {
             viewState.postValue(ViewState(emptyList()))
         }
+    }
+
+    override fun locationSelected(searchResult: SearchResult) {
+        viewState.value = ViewState(emptyList())
+        commands.value = SelectLocation(searchResult.locationName, searchResult.latitude, searchResult.longitude)
     }
 }
 

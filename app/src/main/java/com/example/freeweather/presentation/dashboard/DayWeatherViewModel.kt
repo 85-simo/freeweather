@@ -10,7 +10,7 @@ import com.example.freeweather.domain.WeatherForecast
 import com.example.freeweather.domain.WeatherPrediction
 import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.*
 import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.Command.Navigate
-import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.Command.Navigate.Destination.*
+import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.Command.Navigate.*
 import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.WeatherInfo.CurrentWeatherInfo
 import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.WeatherInfo.DailyWeatherInfo
 import com.hadilq.liveevent.LiveEvent
@@ -25,6 +25,9 @@ import kotlin.math.roundToInt
 private const val TIME_FORMAT = "HH:mm"
 private const val DATE_TIME_FORMAT = "EEE, d MMM yyyy HH:mm:ss"
 private const val DATE_FORMAT = "EEE, d MMM"
+private const val DEFAULT_LOCATION_NAME = "London, GB"
+private const val DEFAULT_LOCATION_LAT = 51.509865
+private const val DEFAULT_LOCATION_LON = -0.118092
 
 interface DayWeatherViewModel {
     sealed class Command {
@@ -82,6 +85,10 @@ internal class DayWeatherViewModelImpl @Inject constructor(
     override val viewStateStream = MutableLiveData<ViewState>()
     override val commands = LiveEvent<Command>()
 
+    init {
+        locationSet(DEFAULT_LOCATION_NAME, DEFAULT_LOCATION_LAT, DEFAULT_LOCATION_LON)
+    }
+
     override fun locationSet(locationName: String, lat: Double, lon: Double) {
         viewModelScope.launch(Dispatchers.IO) {
             val weatherForecast = repository.getWeatherByCoordinates(lat, lon)
@@ -90,7 +97,7 @@ internal class DayWeatherViewModelImpl @Inject constructor(
     }
 
     override fun searchClicked() {
-        commands.value = Navigate(LOCATION_SEARCH)
+        commands.value = Navigate(Destination.LOCATION_SEARCH)
     }
 }
 

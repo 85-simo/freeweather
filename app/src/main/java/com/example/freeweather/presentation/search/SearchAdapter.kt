@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.freeweather.databinding.SearchResultItemBinding
 import com.example.freeweather.presentation.search.SearchViewModel.SearchResult
 
-class SearchAdapter(private var searchResults: List<SearchResult>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class SearchAdapter(private var searchResults: List<SearchResult>, private val itemClickListener: (SearchResult) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -16,7 +16,7 @@ class SearchAdapter(private var searchResults: List<SearchResult>) : RecyclerVie
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val currentItem = searchResults[position]
         if (holder is SearchViewHolder) {
-            holder.bind(currentItem)
+            holder.bind(currentItem, itemClickListener)
         }
     }
 
@@ -29,7 +29,10 @@ class SearchAdapter(private var searchResults: List<SearchResult>) : RecyclerVie
 }
 
 private class SearchViewHolder(private val binding: SearchResultItemBinding) : RecyclerView.ViewHolder(binding.root) {
-    fun bind(searchResult: SearchResult) {
+    fun bind(searchResult: SearchResult, itemClickListener: (SearchResult) -> Unit) {
         binding.searchResult.text = searchResult.locationName
+        binding.searchItemLayout.setOnClickListener {
+            itemClickListener.invoke(searchResult)
+        }
     }
 }

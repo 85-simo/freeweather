@@ -7,18 +7,22 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.freeweather.databinding.FragmentSearchBinding
 import com.example.freeweather.presentation.BaseFragment
-import com.example.freeweather.presentation.search.SearchViewModel.Command.NavigateBack
+import com.example.freeweather.presentation.dashboard.DayWeatherViewModel
+import com.example.freeweather.presentation.dashboard.DayWeatherViewModelImpl
+import com.example.freeweather.presentation.search.SearchViewModel.Command.SelectLocation
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class SearchFragment : BaseFragment<FragmentSearchBinding>() {
-    private val searchViewModel: SearchViewModel by activityViewModels<SearchViewModelImpl>()
+    private val searchViewModel: SearchViewModel by viewModels<SearchViewModelImpl>()
+    private val dayWeatherViewModel: DayWeatherViewModel by activityViewModels<DayWeatherViewModelImpl>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
@@ -35,7 +39,9 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
         val linearLayoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         val defaultItemAnimator = DefaultItemAnimator()
         val divider = DividerItemDecoration(requireActivity(), LinearLayout.HORIZONTAL)
-        val searchAdapter = SearchAdapter(emptyList())
+        val searchAdapter = SearchAdapter(emptyList()) {
+            searchViewModel.locationSelected(it)
+        }
         with(binding.searchResults) {
             layoutManager = linearLayoutManager
             itemAnimator = defaultItemAnimator
@@ -45,7 +51,10 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
 
         searchViewModel.commands.observe(viewLifecycleOwner) { command ->
             when (command) {
-                is NavigateBack -> findNavController().popBackStack()
+                is SelectLocation -> {
+                    dayWeatherViewModel.locationSet(command.locationName, command.latitude, command.longitude)
+                    findNavController().popBackStack()
+                }
             }
         }
         searchViewModel.viewState.observe(viewLifecycleOwner) { viewState ->

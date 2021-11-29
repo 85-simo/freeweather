@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -15,15 +16,14 @@ import com.example.freeweather.databinding.FragmentDayWeatherBinding
 import com.example.freeweather.presentation.BaseFragment
 import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.Command.Navigate
 import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.Command.Navigate.Destination.LOCATION_SEARCH
+import com.example.freeweather.presentation.search.SearchViewModel
+import com.example.freeweather.presentation.search.SearchViewModel.Command.SelectLocation
+import com.example.freeweather.presentation.search.SearchViewModelImpl
 import dagger.hilt.android.AndroidEntryPoint
-
-private const val DEFAULT_LOCATION_NAME = "London, GB"
-private const val DEFAULT_LOCATION_LAT = 51.509865
-private const val DEFAULT_LOCATION_LON = -0.118092
 
 @AndroidEntryPoint
 class DayWeatherFragment : BaseFragment<FragmentDayWeatherBinding>() {
-    private val dayWeatherViewModel: DayWeatherViewModel by viewModels<DayWeatherViewModelImpl>()
+    private val dayWeatherViewModel: DayWeatherViewModel by activityViewModels<DayWeatherViewModelImpl>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentDayWeatherBinding.inflate(inflater, container, false)
@@ -64,6 +64,5 @@ class DayWeatherFragment : BaseFragment<FragmentDayWeatherBinding>() {
                 }
             }
         }
-        dayWeatherViewModel.locationSet( DEFAULT_LOCATION_NAME, DEFAULT_LOCATION_LAT, DEFAULT_LOCATION_LON)
     }
 }
