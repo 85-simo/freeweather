@@ -3,27 +3,33 @@ package com.example.freeweather.presentation.dashboard
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.freeweather.data.repository.Repository
-import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.Command
-import com.hadilq.liveevent.LiveEvent
+import com.example.freeweather.domain.WeatherForecast
+import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.ViewState
+import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.WeatherInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
-interface DayWeatherViewModel {
-    sealed class Command {
-        data class Navigate(val destination: Destination) : Command() {
-            enum class Destination {
-                LOCATION_SEARCH
-            }
-        }
-    }
+private const val TIME_FORMAT = "HH:mm"
+private const val DATE_TIME_FORMAT = "dd/MM/yyyy HH:mm:ss.SSS"
 
-    data class ViewState(
-        val weatherDescShort: String,
-        val weatherDescLong: String,
+interface DayWeatherViewModel {
+    data class LocationInfo(
+        val locationName: String
+    )
+
+    data class WeatherInfo(
+        val description: String,
         val weatherIconUrl: String,
         val currentTemperature: String,
         val perceivedTemperature: String,
+        val maxTemp: String,
+        val minTemp: String,
         val windSpeed: String,
         val windAngle: String,
         val humidityPercent: String,
@@ -34,11 +40,13 @@ interface DayWeatherViewModel {
         val updatedAt: String
     )
 
-    val commands: LiveData<Command>
-    val viewState: LiveData<ViewState>
+    data class ViewState(
+        val weather: WeatherInfo
+    )
 
-    fun searchButtonClicked()
-    fun locationSet(name: String, lat: Double, lon: Double)
+    val viewStateStream: LiveData<ViewState>
+
+    fun locationSet(lat: Double, lon: Double)
 }
 
 @HiltViewModel
@@ -46,15 +54,29 @@ internal class DayWeatherViewModelImpl @Inject constructor(
     private val repository: Repository
 ) : DayWeatherViewModel, ViewModel() {
 
-    override val commands = LiveEvent<Command>()
-    override val viewState = MutableLiveData<DayWeatherViewModel.ViewState>()
+    override val viewStateStream = MutableLiveData<ViewState>()
 
-    override fun searchButtonClicked() {
-
+    override fun locationSet(lat: Double, lon: Double) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val weatherForecast = repository.getWeatherByCoordinates(lat, lon)
+            viewStateStream.postValue(ViewState(weatherForecast.toWeatherInfo()))
+        }
     }
-
-    override fun locationSet(name: String, lat: Double, lon: Double) {
-        TODO("Not yet implemented")
-    }
-
 }
+
+private fun WeatherForecast.toWeatherInfo() = WeatherInfo(
+    description = currentWeather.description,
+    weatherIconUrl = currentWeather.iconLarge,
+    currentTemperature = "${currentWeather.temperature} K",
+    perceivedTemperature = "${currentWeather.perceivedTemp} K",
+    maxTemp = "${currentWeather.maxTemp} K",
+    minTemp = "${currentWeather.minTemp} K",
+    windSpeed = "${currentWeather.windSpeed} m/s",
+    windAngle = "${currentWeather.windAngle} deg",
+    humidityPercent = "${currentWeather.humidity}%",
+    visibility = "${currentWeather.visibility} m",
+    pressure = "${currentWeather.pressure} hPa",
+    sunrise = SimpleDateFormat(TIME_FORMAT, Locale.getDefault()).format(currentWeather.sunrise),
+    sunset = SimpleDateFormat(TIME_FORMAT, Locale.getDefault()).format(currentWeather.sunset),
+    updatedAt = SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault()).format(currentWeather.timestamp)
+)
