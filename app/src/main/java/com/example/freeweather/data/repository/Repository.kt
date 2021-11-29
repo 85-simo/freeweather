@@ -19,7 +19,7 @@ import javax.inject.Inject
 interface Repository {
     suspend fun getCitiesByName(cityName: String): List<City>
     suspend fun getWeatherByCoordinates(lat: Double, lon: Double): WeatherForecast
-    suspend fun saveFavouriteCity(city: City)
+    suspend fun saveFavouriteCity(city: City): Long
     fun getFavouriteCities(): Flow<List<City>>
     suspend fun deleteFavouriteCity(city: City)
 }

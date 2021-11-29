@@ -30,7 +30,9 @@ class DayWeatherFragment : BaseFragment<FragmentDayWeatherBinding>() {
         super.onViewCreated(view, savedInstanceState)
         val linearLayoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         val defaultItemAnimator = DefaultItemAnimator()
-        val weatherAdapter = WeatherAdapter(emptyList())
+        val weatherAdapter = WeatherAdapter(emptyList()) {
+            dayWeatherViewModel.favouriteToggleClicked(it)
+        }
         val listDivider = DividerItemDecoration(requireActivity(), LinearLayout.HORIZONTAL)
         with(binding.weatherRecycler) {
             layoutManager = linearLayoutManager

@@ -32,7 +32,7 @@ data class FavouriteCity(
 @Dao
 interface FavouriteCityDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(favouriteCity: FavouriteCity)
+    suspend fun insert(favouriteCity: FavouriteCity): Long
 
     @Delete
     suspend fun delete(favouriteCity: FavouriteCity)

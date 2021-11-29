@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.freeweather.data.repository.Repository
+import com.example.freeweather.domain.City
 import com.example.freeweather.domain.CurrentWeather
 import com.example.freeweather.domain.WeatherForecast
 import com.example.freeweather.domain.WeatherPrediction
@@ -76,12 +77,14 @@ interface DayWeatherViewModel {
 
     fun locationSet(locationName: String, lat: Double, lon: Double)
     fun searchClicked()
+    fun favouriteToggleClicked(favourite: Boolean)
 }
 
 @HiltViewModel
 internal class DayWeatherViewModelImpl @Inject constructor(
     private val repository: Repository
 ) : DayWeatherViewModel, ViewModel() {
+    private lateinit var currentLocation: City
 
     override val viewStateStream = MutableLiveData<ViewState>()
     override val commands = LiveEvent<Command>()
@@ -90,7 +93,12 @@ internal class DayWeatherViewModelImpl @Inject constructor(
         locationSet(DEFAULT_LOCATION_NAME, DEFAULT_LOCATION_LAT, DEFAULT_LOCATION_LON)
     }
 
-    override fun locationSet(locationName: String, lat: Double, lon: Double) {
+    override fun locationSet(locationCommaSeparated: String, lat: Double, lon: Double) {
+        val locationParts = locationCommaSeparated.split(",")
+        val locationName = locationParts[0]
+        val locationState = if (locationParts.size == 3) locationParts[1] else null
+        val locationCountry = if (locationParts.size == 3) locationParts[2] else locationParts[1]
+        currentLocation = City(name = locationName, state = locationState, country = locationCountry, latitude = lat, longitude = lon)
         viewModelScope.launch(Dispatchers.IO) {
             val weatherForecast = repository.getWeatherByCoordinates(lat, lon)
             viewStateStream.postValue(ViewState(locationName, weatherForecast.toWeatherInfo()))
@@ -99,6 +107,17 @@ internal class DayWeatherViewModelImpl @Inject constructor(
 
     override fun searchClicked() {
         commands.value = Navigate(Destination.LOCATION_SEARCH)
+    }
+
+    override fun favouriteToggleClicked(favourite: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (favourite) {
+                val id = repository.saveFavouriteCity(currentLocation)
+                currentLocation = currentLocation.copy(id = id)
+            } else {
+                repository.deleteFavouriteCity(currentLocation)
+            }
+        }
     }
 }
 
