@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import com.example.freeweather.R
 import com.example.freeweather.databinding.FragmentDayWeatherBinding
 import com.example.freeweather.presentation.BaseFragment
 import com.squareup.picasso.Picasso
@@ -38,6 +39,7 @@ class DayWeatherFragment : BaseFragment<FragmentDayWeatherBinding>() {
                 sunsetValue.text = viewState.weather.sunset
                 Picasso.get()
                     .load(viewState.weather.weatherIconUrl)
+                    .resizeDimen(R.dimen.weather_icon_size, R.dimen.weather_icon_size)
                     .into(currentWeatherIcon)
             }
         }

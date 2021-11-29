@@ -8,4 +8,5 @@
     <dimen name="text_size_x_large">26sp</dimen>
     <dimen name="text_size_xx_large">30sp</dimen>
     <dimen name="text_size_xxx_large">34sp</dimen>
+    <dimen name="weather_icon_size">128dp</dimen>
 </resources>
