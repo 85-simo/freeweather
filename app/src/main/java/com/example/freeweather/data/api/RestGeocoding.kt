@@ -5,6 +5,6 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface RestGeocoding {
-    @GET("/geo/1.0/direct")
+    @GET("/geo/1.0/direct?limit=5")
     suspend fun getCityLatLon(@Query("q") cityName: String): List<LocationInfoDTO>
 }

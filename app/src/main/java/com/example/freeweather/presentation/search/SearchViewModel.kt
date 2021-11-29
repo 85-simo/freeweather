@@ -13,13 +13,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val MIN_SEARCH_QUERY_LENGTH = 2
+
 interface SearchViewModel {
     sealed class Command {
         object NavigateBack : Command()
     }
 
     data class SearchResult(
-        val locationId: Long,
         val locationName: String,
         val latitude: Double,
         val longitude: Double
@@ -42,16 +43,19 @@ internal class SearchViewModelImpl @Inject constructor(
     override val viewState = MutableLiveData<ViewState>()
 
     override fun locationSearchSubmitted(searchString: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val cities = repository.getCitiesByName(searchString)
-            val searchResults = cities.map { it.toSearchResult() }
-            viewState.postValue(ViewState(searchResults))
+        if (searchString.length > MIN_SEARCH_QUERY_LENGTH) {
+            viewModelScope.launch(Dispatchers.IO) {
+                val cities = repository.getCitiesByName(searchString)
+                val searchResults = cities.map { it.toSearchResult() }
+                viewState.postValue(ViewState(searchResults))
+            }
+        } else {
+            viewState.postValue(ViewState(emptyList()))
         }
     }
 }
 
 private fun City.toSearchResult() = SearchResult(
-    locationId = id,
     locationName = listOfNotNull(name, state, country).joinToString(),
     latitude = latitude,
     longitude = longitude
