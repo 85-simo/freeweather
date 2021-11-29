@@ -44,12 +44,24 @@ internal class SearchViewModelImpl @Inject constructor(
     override val commands = LiveEvent<Command>()
     override val viewState = MutableLiveData<ViewState>()
 
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            val favouriteLocations = getListOfFavouriteLocations()
+            viewState.postValue(ViewState(favouriteLocations))
+        }
+    }
+
     override fun locationSearchSubmitted(searchString: String) {
         if (searchString.length > MIN_SEARCH_QUERY_LENGTH) {
             viewModelScope.launch(Dispatchers.IO) {
                 val cities = repository.getCitiesByName(searchString)
                 val searchResults = cities.map { it.toSearchResult() }
                 viewState.postValue(ViewState(searchResults))
+            }
+        } else if (searchString.isEmpty()) {
+            viewModelScope.launch(Dispatchers.IO) {
+                val favouriteLocations = getListOfFavouriteLocations()
+                viewState.postValue(ViewState(favouriteLocations))
             }
         } else {
             viewState.postValue(ViewState(emptyList()))
@@ -60,6 +72,11 @@ internal class SearchViewModelImpl @Inject constructor(
         viewState.value = ViewState(emptyList())
         commands.value = SelectLocation(searchResult.locationName, searchResult.latitude, searchResult.longitude)
     }
+
+    private suspend fun getListOfFavouriteLocations() = repository.getFavouriteCities()
+        .map { city ->
+            city.toSearchResult()
+        }
 }
 
 private fun City.toSearchResult() = SearchResult(

@@ -34,7 +34,7 @@ interface FavouriteCityDao {
     suspend fun delete(favouriteCity: FavouriteCity)
 
     @Query("SELECT * FROM $TABLE_NAME")
-    fun getAll(): Flow<List<FavouriteCity>>
+    suspend fun getAll(): List<FavouriteCity>
 
     @Query("SELECT * FROM $TABLE_NAME WHERE $COL_LATITUDE = :latitude AND $COL_LONGITUDE = :longitude")
     suspend fun getFavouriteCityByCoordinates(latitude: Double, longitude: Double): FavouriteCity?

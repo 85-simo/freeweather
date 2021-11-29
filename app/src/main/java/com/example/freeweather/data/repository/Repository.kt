@@ -20,7 +20,7 @@ interface Repository {
     suspend fun getCitiesByName(cityName: String): List<City>
     suspend fun getWeatherByCoordinates(lat: Double, lon: Double): WeatherForecast
     suspend fun saveFavouriteCity(city: City)
-    fun getFavouriteCities(): Flow<List<City>>
+    suspend fun getFavouriteCities(): List<City>
     suspend fun deleteFavouriteCity(city: City)
     suspend fun getFavouriteCityByCoordinates(latitude: Double, longitude: Double): City?
 }
@@ -38,14 +38,9 @@ internal class RepositoryImpl @Inject constructor(
         dbClient.favouriteCityDao().insert(city.toData())
     }
 
-    override fun getFavouriteCities(): Flow<List<City>> = dbClient.favouriteCityDao()
-        .getAll()
-        .distinctUntilChanged()
-        .map { cities ->
-            cities.map { city ->
-                city.toDomain()
-            }
-        }
+    override suspend fun getFavouriteCities() = dbClient.favouriteCityDao().getAll().map { city ->
+        city.toDomain()
+    }
 
     override suspend fun deleteFavouriteCity(city: City) = dbClient.favouriteCityDao().delete(city.toData())
 
