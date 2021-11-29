@@ -8,9 +8,10 @@ import com.example.freeweather.data.repository.Repository
 import com.example.freeweather.domain.CurrentWeather
 import com.example.freeweather.domain.WeatherForecast
 import com.example.freeweather.domain.WeatherPrediction
-import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.*
+import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.Command
 import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.Command.Navigate
-import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.Command.Navigate.*
+import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.Command.Navigate.Destination
+import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.ViewState
 import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.WeatherInfo.CurrentWeatherInfo
 import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.WeatherInfo.DailyWeatherInfo
 import com.hadilq.liveevent.LiveEvent

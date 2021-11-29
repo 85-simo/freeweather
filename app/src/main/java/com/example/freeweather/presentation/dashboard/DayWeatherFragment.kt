@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -16,9 +15,6 @@ import com.example.freeweather.databinding.FragmentDayWeatherBinding
 import com.example.freeweather.presentation.BaseFragment
 import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.Command.Navigate
 import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.Command.Navigate.Destination.LOCATION_SEARCH
-import com.example.freeweather.presentation.search.SearchViewModel
-import com.example.freeweather.presentation.search.SearchViewModel.Command.SelectLocation
-import com.example.freeweather.presentation.search.SearchViewModelImpl
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

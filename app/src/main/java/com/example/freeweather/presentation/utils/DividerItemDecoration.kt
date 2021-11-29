@@ -2,15 +2,12 @@ package com.example.freeweather.presentation.utils
 
 import android.R
 import android.content.Context
-import androidx.recyclerview.widget.RecyclerView
-
-import androidx.core.content.ContextCompat
-
 import android.content.res.TypedArray
 import android.graphics.Canvas
-
 import android.graphics.drawable.Drawable
 import android.view.View
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 
 private val ATTRS = intArrayOf(R.attr.listDivider)
