@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="generic_whitespace">18dp</dimen>
+    <dimen name="view_padding">@dimen/generic_whitespace</dimen>
+    <dimen name="text_size_normal">16sp</dimen>
+    <dimen name="text_size_small">12sp</dimen>
+    <dimen name="text_size_large">20sp</dimen>
+    <dimen name="text_size_x_large">26sp</dimen>
+    <dimen name="text_size_xx_large">30sp</dimen>
+    <dimen name="text_size_xxx_large">34sp</dimen>
+</resources>
