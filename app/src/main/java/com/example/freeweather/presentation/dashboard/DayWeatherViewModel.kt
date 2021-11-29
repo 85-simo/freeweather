@@ -159,5 +159,5 @@ private fun WeatherPrediction.toView() = DailyWeatherInfo(
 
 private fun WeatherForecast.toWeatherInfo() = buildList {
     add(currentWeather.toView())
-    addAll(dailyWeather.map { it.toView() })
+    addAll(dailyWeather.drop(0).map { it.toView() })
 }
