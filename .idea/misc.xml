@@ -9,6 +9,7 @@
         <entry key="app/src/main/res/layout/current_weather_item.xml" value="0.1569078947368421" />
         <entry key="app/src/main/res/layout/daily_weather_item.xml" value="0.375" />
         <entry key="app/src/main/res/layout/fragment_day_weather.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/fragment_search.xml" value="0.27203947368421055" />
         <entry key="app/src/main/res/layout/fragment_splashscreen.xml" value="0.234375" />
         <entry key="app/src/main/res/layout/future_weather_item.xml" value="0.335" />
         <entry key="app/src/main/res/menu/menu.xml" value="0.27203947368421055" />
