@@ -41,12 +41,13 @@
             tools:text="29 November, 01:11"/>
 
         <ImageView android:id="@+id/current_weather_icon"
-            android:layout_width="128dp"
-            android:layout_height="128dp"
+            android:layout_width="@dimen/weather_icon_size"
+            android:layout_height="@dimen/weather_icon_size"
             app:layout_constraintStart_toEndOf="@id/start_guide"
             app:layout_constraintTop_toBottomOf="@id/datetime"
-            android:layout_marginTop="12dp"
-            tools:src="@mipmap/ic_launcher_foreground" />
+            android:scaleType="fitCenter"
+            tools:src="@mipmap/ic_launcher_foreground"
+            android:layout_marginTop="8dp" />
 
         <TextView android:id="@+id/current_weather_desc"
             android:layout_width="wrap_content"
@@ -85,7 +86,7 @@
             android:layout_height="wrap_content"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="@dimen/text_size_small"
-            tools:text="Min:"
+            android:text="Min:"
             app:layout_constraintEnd_toStartOf="@id/min_temp_value"
             app:layout_constraintBaseline_toBaselineOf="@id/min_temp_value"
             android:layout_marginEnd="2dp"/>
@@ -104,7 +105,7 @@
             android:layout_height="wrap_content"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="@dimen/text_size_small"
-            tools:text="Max:"
+            android:text="Max:"
             app:layout_constraintEnd_toStartOf="@id/max_temp_value"
             app:layout_constraintBaseline_toBaselineOf="@id/max_temp_value"
             android:layout_marginEnd="2dp"/>
@@ -124,7 +125,7 @@
             android:layout_height="wrap_content"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="@dimen/text_size_small"
-            tools:text="Feels like"
+            android:text="Feels like"
             app:layout_constraintEnd_toStartOf="@id/feels_like_value"
             app:layout_constraintBaseline_toBaselineOf="@id/feels_like_value"
             android:layout_marginEnd="4dp" />
