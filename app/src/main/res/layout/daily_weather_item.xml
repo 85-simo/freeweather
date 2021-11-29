@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+    <androidx.constraintlayout.widget.Guideline android:id="@+id/top_guide"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="@dimen/daily_weather_padding" />
+    <androidx.constraintlayout.widget.Guideline android:id="@+id/end_guide"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/daily_weather_padding" />
+    <androidx.constraintlayout.widget.Guideline android:id="@+id/bottom_guide"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="@dimen/daily_weather_padding" />
+    <androidx.constraintlayout.widget.Guideline android:id="@+id/start_guide"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/daily_weather_padding" />
+
+    <TextView android:id="@+id/date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="@dimen/text_size_small"
+        tools:text="Today"
+        app:layout_constraintTop_toBottomOf="@id/top_guide"
+        app:layout_constraintStart_toEndOf="@id/start_guide" />
+
+    <TextView android:id="@+id/description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="?android:attr/textColorSecondary"
+        android:textSize="@dimen/text_size_small"
+        tools:text="Mostly cloudy"
+        app:layout_constraintTop_toBottomOf="@id/date"
+        app:layout_constraintStart_toStartOf="@id/date"
+        app:layout_constraintBottom_toTopOf="@id/bottom_guide"
+        android:layout_marginTop="6dp"/>
+
+    <TextView android:id="@+id/max_temp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="@dimen/text_size_small"
+        tools:text="5"
+        app:layout_constraintEnd_toStartOf="@id/end_guide"
+        app:layout_constraintBaseline_toBaselineOf="@id/date" />
+
+    <TextView android:id="@+id/min_temp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="?android:attr/textColorSecondary"
+        android:textSize="@dimen/text_size_small"
+        tools:text="1"
+        app:layout_constraintBaseline_toBaselineOf="@id/description"
+        app:layout_constraintEnd_toEndOf="@id/max_temp"
+        android:layout_marginTop="6dp"/>
+
+    <ImageView android:id="@+id/weather_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toStartOf="@id/max_temp"
+        app:layout_constraintTop_toBottomOf="@id/top_guide"
+        app:layout_constraintBottom_toTopOf="@id/bottom_guide"
+        android:adjustViewBounds="true"
+        android:src="@mipmap/ic_launcher_foreground"
+        android:layout_marginEnd="12dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

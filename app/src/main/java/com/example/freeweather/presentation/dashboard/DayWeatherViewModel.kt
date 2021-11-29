@@ -5,43 +5,54 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.freeweather.data.repository.Repository
+import com.example.freeweather.domain.CurrentWeather
 import com.example.freeweather.domain.WeatherForecast
-import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.ViewState
-import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.WeatherInfo
+import com.example.freeweather.domain.WeatherPrediction
+import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.*
+import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.WeatherInfo.CurrentWeatherInfo
+import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.WeatherInfo.DailyWeatherInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 private const val TIME_FORMAT = "HH:mm"
-private const val DATE_TIME_FORMAT = "dd/MM/yyyy HH:mm:ss.SSS"
+private const val DATE_TIME_FORMAT = "EEE, d MMM yyyy HH:mm:ss"
+private const val DATE_FORMAT = "EEE, d MMM"
 
 interface DayWeatherViewModel {
-    data class LocationInfo(
-        val locationName: String
-    )
+    sealed class WeatherInfo {
+        data class CurrentWeatherInfo(
+            val description: String,
+            val weatherIconUrl: String,
+            val currentTemperature: String,
+            val perceivedTemperature: String,
+            val maxTemp: String,
+            val minTemp: String,
+            val windSpeed: String,
+            val windAngle: String,
+            val humidityPercent: String,
+            val visibility: String,
+            val pressure: String,
+            val sunrise: String,
+            val sunset: String,
+            val dateAndTime: String
+        ) : WeatherInfo()
 
-    data class WeatherInfo(
-        val description: String,
-        val weatherIconUrl: String,
-        val currentTemperature: String,
-        val perceivedTemperature: String,
-        val maxTemp: String,
-        val minTemp: String,
-        val windSpeed: String,
-        val windAngle: String,
-        val humidityPercent: String,
-        val visibility: String,
-        val pressure: String,
-        val sunrise: String,
-        val sunset: String,
-        val updatedAt: String
-    )
+        data class DailyWeatherInfo(
+            val date: String,
+            val description: String,
+            val minTemp: String,
+            val maxTemp: String,
+            val iconUrl: String
+        ) : WeatherInfo()
+    }
 
     data class ViewState(
-        val weather: WeatherInfo
+        val weatherInfo: List<WeatherInfo>
     )
 
     val viewStateStream: LiveData<ViewState>
@@ -64,19 +75,32 @@ internal class DayWeatherViewModelImpl @Inject constructor(
     }
 }
 
-private fun WeatherForecast.toWeatherInfo() = WeatherInfo(
-    description = currentWeather.description,
-    weatherIconUrl = currentWeather.iconLarge,
-    currentTemperature = "${currentWeather.temperature}° C",
-    perceivedTemperature = "${currentWeather.perceivedTemp}°",
-    maxTemp = "${currentWeather.maxTemp}° C",
-    minTemp = "${currentWeather.minTemp}° C",
-    windSpeed = "${currentWeather.windSpeed} m/s",
-    windAngle = "${currentWeather.windAngle}°",
-    humidityPercent = "${currentWeather.humidity}%",
-    visibility = "${currentWeather.visibility} m",
-    pressure = "${currentWeather.pressure} hPa",
-    sunrise = SimpleDateFormat(TIME_FORMAT, Locale.getDefault()).format(currentWeather.sunrise),
-    sunset = SimpleDateFormat(TIME_FORMAT, Locale.getDefault()).format(currentWeather.sunset),
-    updatedAt = SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault()).format(currentWeather.timestamp)
+private fun CurrentWeather.toView() = CurrentWeatherInfo(
+    description = description,
+    weatherIconUrl = iconLarge,
+    currentTemperature = "${temperature.roundToInt()}° C",
+    perceivedTemperature = "${perceivedTemp.roundToInt()}°",
+    maxTemp = "${maxTemp.roundToInt()}° C",
+    minTemp = "${minTemp.roundToInt()}° C",
+    windSpeed = "${windSpeed.roundToInt()} m/s",
+    windAngle = "$windAngle°",
+    humidityPercent = "$humidity%",
+    visibility = "$visibility m",
+    pressure = "$pressure hPa",
+    sunrise = SimpleDateFormat(TIME_FORMAT, Locale.getDefault()).format(sunrise),
+    sunset = SimpleDateFormat(TIME_FORMAT, Locale.getDefault()).format(sunset),
+    dateAndTime = SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault()).format(timestamp)
 )
+
+private fun WeatherPrediction.toView() = DailyWeatherInfo(
+    date = SimpleDateFormat(DATE_FORMAT, Locale.getDefault()).format(timestamp),
+    description = description,
+    minTemp = "${minTemp.roundToInt()}°",
+    maxTemp = "${maxTemp.roundToInt()}°",
+    iconUrl = iconSmall
+)
+
+private fun WeatherForecast.toWeatherInfo() = buildList {
+    add(currentWeather.toView())
+    addAll(dailyWeather.map { it.toView() })
+}

@@ -2,6 +2,7 @@
 <resources>
     <dimen name="generic_whitespace">18dp</dimen>
     <dimen name="view_padding">@dimen/generic_whitespace</dimen>
+    <dimen name="daily_weather_padding">12dp</dimen>
     <dimen name="text_size_normal">16sp</dimen>
     <dimen name="text_size_small">12sp</dimen>
     <dimen name="text_size_large">20sp</dimen>
