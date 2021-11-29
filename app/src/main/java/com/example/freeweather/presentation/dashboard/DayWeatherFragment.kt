@@ -6,12 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.freeweather.R
 import com.example.freeweather.databinding.FragmentDayWeatherBinding
 import com.example.freeweather.presentation.BaseFragment
+import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.Command.Navigate
+import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.Command.Navigate.Destination.LOCATION_SEARCH
 import dagger.hilt.android.AndroidEntryPoint
 
 private const val DEFAULT_LOCATION_NAME = "London, GB"
@@ -40,9 +43,26 @@ class DayWeatherFragment : BaseFragment<FragmentDayWeatherBinding>() {
             adapter = weatherAdapter
         }
         binding.titlebar.inflateMenu(R.menu.menu)
+        binding.titlebar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.action_search -> dayWeatherViewModel.searchClicked()
+                else -> Unit // do nothing
+            }
+            true
+        }
+
         dayWeatherViewModel.viewStateStream.observe(viewLifecycleOwner) { viewState ->
             binding.titlebar.title = viewState.locationName
             weatherAdapter.submitList(viewState.weatherInfo)
+        }
+        dayWeatherViewModel.commands.observe(viewLifecycleOwner) { command ->
+            when (command) {
+                is Navigate -> {
+                    when (command.destination) {
+                        LOCATION_SEARCH -> findNavController().navigate(R.id.action_dayWeatherFragment_to_searchFragment)
+                    }
+                }
+            }
         }
         dayWeatherViewModel.locationSet( DEFAULT_LOCATION_NAME, DEFAULT_LOCATION_LAT, DEFAULT_LOCATION_LON)
     }

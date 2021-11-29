@@ -9,8 +9,11 @@ import com.example.freeweather.domain.CurrentWeather
 import com.example.freeweather.domain.WeatherForecast
 import com.example.freeweather.domain.WeatherPrediction
 import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.*
+import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.Command.Navigate
+import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.Command.Navigate.Destination.*
 import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.WeatherInfo.CurrentWeatherInfo
 import com.example.freeweather.presentation.dashboard.DayWeatherViewModel.WeatherInfo.DailyWeatherInfo
+import com.hadilq.liveevent.LiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,6 +27,14 @@ private const val DATE_TIME_FORMAT = "EEE, d MMM yyyy HH:mm:ss"
 private const val DATE_FORMAT = "EEE, d MMM"
 
 interface DayWeatherViewModel {
+    sealed class Command {
+        data class Navigate(val destination: Destination) : Command() {
+            enum class Destination {
+                LOCATION_SEARCH
+            }
+        }
+    }
+
     sealed class WeatherInfo {
         data class CurrentWeatherInfo(
             val description: String,
@@ -56,9 +67,11 @@ interface DayWeatherViewModel {
         val weatherInfo: List<WeatherInfo>
     )
 
+    val commands: LiveData<Command>
     val viewStateStream: LiveData<ViewState>
 
     fun locationSet(locationName: String, lat: Double, lon: Double)
+    fun searchClicked()
 }
 
 @HiltViewModel
@@ -67,12 +80,17 @@ internal class DayWeatherViewModelImpl @Inject constructor(
 ) : DayWeatherViewModel, ViewModel() {
 
     override val viewStateStream = MutableLiveData<ViewState>()
+    override val commands = LiveEvent<Command>()
 
     override fun locationSet(locationName: String, lat: Double, lon: Double) {
         viewModelScope.launch(Dispatchers.IO) {
             val weatherForecast = repository.getWeatherByCoordinates(lat, lon)
             viewStateStream.postValue(ViewState(locationName, weatherForecast.toWeatherInfo()))
         }
+    }
+
+    override fun searchClicked() {
+        commands.value = Navigate(LOCATION_SEARCH)
     }
 }
 
