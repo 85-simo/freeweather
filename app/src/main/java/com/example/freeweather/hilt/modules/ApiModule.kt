@@ -1,6 +1,9 @@
 package com.example.freeweather.hilt.modules
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import com.example.freeweather.data.api.RestClient
 import com.example.freeweather.data.api.RestClientImpl
 import com.example.freeweather.data.api.RestGeocoding
@@ -19,6 +22,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 import java.util.concurrent.TimeUnit
+import javax.inject.Named
 import javax.inject.Singleton
 
 
@@ -41,8 +45,9 @@ abstract class ApiModule {
 
     companion object {
         @Provides
+        @Named("API_KEY")
         @Singleton
-        fun provideInterceptor() = Interceptor { chain ->
+        fun provideApiKeyInterceptor() = Interceptor { chain ->
             val originalReq = chain.request()
             val originalUrl = originalReq.url
             val newUrl = originalUrl.newBuilder()
@@ -52,6 +57,33 @@ abstract class ApiModule {
                 .url(newUrl)
                 .build()
             chain.proceed(newRequest)
+        }
+
+        @Provides
+        @Named("ONLINE")
+        @Singleton
+        fun provideOnlineInterceptor() = Interceptor { chain ->
+            val response = chain.proceed(chain.request())
+            val maxAge = 60 // read from cache for 60 seconds even if there is internet connection
+            response.newBuilder()
+                .header("Cache-Control", "public, max-age=$maxAge")
+                .removeHeader("Pragma")
+                .build()
+        }
+
+        @Provides
+        @Named("OFFLINE")
+        @Singleton
+        fun provideOfflineInterceptor(context: Context) = Interceptor { chain ->
+            var request = chain.request()
+            if (!isInternetAvailable(context)) {
+                val maxStale = 60 * 60 * 24 // Offline cache available for 24 hours
+                request = request.newBuilder()
+                    .header("Cache-Control", "public, only-if-cached, max-stale=$maxStale")
+                    .removeHeader("Pragma")
+                    .build();
+            }
+            chain.proceed(request)
         }
 
         @Provides
@@ -69,18 +101,26 @@ abstract class ApiModule {
 
         @Provides
         @Singleton
-        fun provideHttpClient(interceptor: Interceptor, httpLoggingInterceptor: HttpLoggingInterceptor, apiCache: Cache) = OkHttpClient.Builder()
+        fun provideHttpClient(
+            @Named("API_KEY") apiKeyInterceptor: Interceptor,
+            @Named("OFFLINE") offlineInterceptor: Interceptor,
+            @Named("ONLINE") onlineInterceptor: Interceptor,
+            httpLoggingInterceptor: HttpLoggingInterceptor,
+            apiCache: Cache
+        ) = OkHttpClient.Builder()
             .connectTimeout(REST_CLIENT_CONNECTION_TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .readTimeout(REST_CLIENT_READ_TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .writeTimeout(REST_CLIENT_WRITE_TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .cache(apiCache)
             .addInterceptor(httpLoggingInterceptor)
-            .addInterceptor(interceptor)
+            .addInterceptor(apiKeyInterceptor)
+            .addInterceptor(offlineInterceptor)
+            .addInterceptor(onlineInterceptor)
             .build()
 
         @Provides
         @Singleton
-        fun provideRetrofit(httpClient: OkHttpClient, gson: Gson) = Retrofit.Builder()
+        fun provideRetrofit(httpClient: OkHttpClient, gson: Gson): Retrofit = Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create(gson))
             .baseUrl(BASE_URL)
             .client(httpClient)
@@ -88,10 +128,24 @@ abstract class ApiModule {
 
         @Provides
         @Singleton
-        fun provideRestWeatherInterface(retrofit: Retrofit) = retrofit.create(RestWeather::class.java)
+        fun provideRestWeatherInterface(retrofit: Retrofit): RestWeather = retrofit.create(RestWeather::class.java)
 
         @Provides
         @Singleton
-        fun provideRestGeocodingInterface(retrofit: Retrofit) = retrofit.create(RestGeocoding::class.java)
+        fun provideRestGeocodingInterface(retrofit: Retrofit): RestGeocoding = retrofit.create(RestGeocoding::class.java)
+
+        private fun isInternetAvailable(context: Context): Boolean {
+            val connectivityManager =
+                context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val networkCapabilities = connectivityManager.activeNetwork ?: return false
+            val actNw =
+                connectivityManager.getNetworkCapabilities(networkCapabilities) ?: return false
+            return when {
+                actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+                actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+                else -> false
+            }
+        }
     }
 }
