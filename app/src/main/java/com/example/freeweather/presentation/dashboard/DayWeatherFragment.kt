@@ -12,8 +12,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.freeweather.R
 import com.example.freeweather.databinding.FragmentDayWeatherBinding
 import com.example.freeweather.presentation.BaseFragment
-import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
+
+private const val DEFAULT_LOCATION_NAME = "London, GB"
+private const val DEFAULT_LOCATION_LAT = 51.509865
+private const val DEFAULT_LOCATION_LON = -0.118092
 
 @AndroidEntryPoint
 class DayWeatherFragment : BaseFragment<FragmentDayWeatherBinding>() {
@@ -36,9 +39,11 @@ class DayWeatherFragment : BaseFragment<FragmentDayWeatherBinding>() {
             addItemDecoration(listDivider)
             adapter = weatherAdapter
         }
+        binding.titlebar.inflateMenu(R.menu.menu)
         dayWeatherViewModel.viewStateStream.observe(viewLifecycleOwner) { viewState ->
+            binding.titlebar.title = viewState.locationName
             weatherAdapter.submitList(viewState.weatherInfo)
         }
-        dayWeatherViewModel.locationSet( 51.509865, -0.118092)
+        dayWeatherViewModel.locationSet( DEFAULT_LOCATION_NAME, DEFAULT_LOCATION_LAT, DEFAULT_LOCATION_LON)
     }
 }

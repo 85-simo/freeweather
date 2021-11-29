@@ -52,12 +52,13 @@ interface DayWeatherViewModel {
     }
 
     data class ViewState(
+        val locationName: String,
         val weatherInfo: List<WeatherInfo>
     )
 
     val viewStateStream: LiveData<ViewState>
 
-    fun locationSet(lat: Double, lon: Double)
+    fun locationSet(locationName: String, lat: Double, lon: Double)
 }
 
 @HiltViewModel
@@ -67,10 +68,10 @@ internal class DayWeatherViewModelImpl @Inject constructor(
 
     override val viewStateStream = MutableLiveData<ViewState>()
 
-    override fun locationSet(lat: Double, lon: Double) {
+    override fun locationSet(locationName: String, lat: Double, lon: Double) {
         viewModelScope.launch(Dispatchers.IO) {
             val weatherForecast = repository.getWeatherByCoordinates(lat, lon)
-            viewStateStream.postValue(ViewState(weatherForecast.toWeatherInfo()))
+            viewStateStream.postValue(ViewState(locationName, weatherForecast.toWeatherInfo()))
         }
     }
 }
