@@ -80,7 +80,7 @@ abstract class ApiModule {
                 request = request.newBuilder()
                     .header("Cache-Control", "public, only-if-cached, max-stale=$maxStale")
                     .removeHeader("Pragma")
-                    .build();
+                    .build()
             }
             chain.proceed(request)
         }

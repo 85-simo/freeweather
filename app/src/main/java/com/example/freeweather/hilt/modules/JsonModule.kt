@@ -1,5 +1,6 @@
 package com.example.freeweather.hilt.modules
 
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
@@ -13,6 +14,6 @@ object JsonModule {
 
     @Provides
     @Singleton
-    fun provideGson() = GsonBuilder().create()
+    fun provideGson(): Gson = GsonBuilder().create()
 
 }
