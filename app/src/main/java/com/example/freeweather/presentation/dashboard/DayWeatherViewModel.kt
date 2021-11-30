@@ -27,6 +27,16 @@ import java.util.*
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
+/**
+ * Collection of interfaces and classes necessary to implement the main view's presentation and business logic.
+ * ViewModels hold the state of the view they refer to, and handle updates in said state through emissions of a specific LiveData stream.
+ * Commands are instead to be considered one-shot operations that need to be consumed, and that could potentially be listened to by observers
+ * from other views, hence the choice of LiveEvent as the concrete implementation for the command stream. This level of indirection is very useful
+ * in ensuring views are as 'dumb' as possible, thus maximizing the unit-testability of business logic.
+ * The 'internal' visibility of the implementation is merely symbolical, as this project consists of a single module only.
+ * It is however still useful in conveying the necessity not to directly instantiate the class from outside this layer.
+ */
+
 private const val TIME_FORMAT = "HH:mm"
 private const val DATE_TIME_FORMAT = "EEE, d MMM yyyy, HH:mm"
 private const val DATE_FORMAT = "EEE, d MMM"
@@ -96,9 +106,12 @@ internal class DayWeatherViewModelImpl @Inject constructor(
     override val commands = LiveEvent<Command>()
 
     init {
+        // On init, set the location to the default one.
         locationSet(DEFAULT_LOCATION_NAME, DEFAULT_LOCATION_LAT, DEFAULT_LOCATION_LON)
     }
 
+    // To be invoked every time the user sets their location. It retrieves weather info based on the passed coordinates and
+    // notifies observers.
     override fun locationSet(locationCommaSeparated: String, lat: Double, lon: Double) {
         val locationParts = locationCommaSeparated.split(",")
         val locationName = locationParts[0].trim()
@@ -120,10 +133,12 @@ internal class DayWeatherViewModelImpl @Inject constructor(
         }
     }
 
+    // To be called every time the user clicks on the search menu action.
     override fun searchClicked() {
         commands.value = Navigate(Destination.LOCATION_SEARCH)
     }
 
+    // Called every time there is a click on the 'set favourite' button.
     override fun favouriteToggleClicked() {
         val currentViewState = viewStateStream.value
         val wasFavourite = currentViewState?.locationFavourite ?: false
@@ -143,6 +158,7 @@ internal class DayWeatherViewModelImpl @Inject constructor(
         }
     }
 
+    // Method used to signal that a refresh action has occurred.
     override fun refresh() {
         locationSet(
             listOfNotNull(currentLocation.name, currentLocation.state, currentLocation.country).joinToString(", "),

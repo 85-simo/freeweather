@@ -7,6 +7,10 @@ import androidx.navigation.fragment.navArgs
 import com.example.freeweather.R
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * Basic implementation of a customisable dialog where title and content can be set from the outside via SafeArgs.
+ */
+
 @AndroidEntryPoint
 class SimpleDialogFragment : DialogFragment() {
     private val args: SimpleDialogFragmentArgs by navArgs()

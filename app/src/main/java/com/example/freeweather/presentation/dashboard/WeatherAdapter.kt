@@ -14,6 +14,11 @@ import com.squareup.picasso.Picasso
 private const val ITEM_VIEW_TYPE_HEADER = 0
 private const val ITEM_VIEW_TYPE_ITEM = 1
 
+/**
+ * Adapter that handles the dataset used to represent the current location's weather: current weather and predictions for the next days
+ * are all handled within the same recyclerview - the current weather item though is treated as a header of sorts.
+ */
+
 class WeatherAdapter(private var dailyWeatherInfoList: List<WeatherInfo>, private val favouriteToggleClickListener: () -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var isFavouriteLocation = false
 

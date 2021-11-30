@@ -17,6 +17,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * Collection of interfaces and classes necessary to implement the main view's presentation and business logic.
+ * ViewModels hold the state of the view they refer to, and handle updates in said state through emissions of a specific LiveData stream.
+ * Commands are instead to be considered one-shot operations that need to be consumed, and that could potentially be listened to by observers
+ * from other views, hence the choice of LiveEvent as the concrete implementation for the command stream. This level of indirection is very useful
+ * in ensuring views are as 'dumb' as possible, thus maximizing the unit-testability of business logic.
+ * The 'internal' visibility of the implementation is merely symbolical, as this project consists of a single module only.
+ * It is however still useful in conveying the necessity not to directly instantiate the class from outside this layer.
+ */
+
 private const val MIN_SEARCH_QUERY_LENGTH = 2
 
 interface SearchViewModel {
@@ -49,6 +59,7 @@ internal class SearchViewModelImpl @Inject constructor(
     override val viewState = MutableLiveData<ViewState>()
 
     init {
+        // On launch, populate the list with saved locations.
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val favouriteLocations = getListOfFavouriteLocations()
@@ -59,6 +70,7 @@ internal class SearchViewModelImpl @Inject constructor(
         }
     }
 
+    // To be invoked each time a new search submission occurs. It obtains coordinates for places that the user could be looking for.
     override fun locationSearchSubmitted(searchString: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -82,6 +94,8 @@ internal class SearchViewModelImpl @Inject constructor(
         }
     }
 
+    // This signals that the user clicked on one of the entries in the list, reacts by clearing the list results (this viewmodel is scoped to the activity)
+    // and notifying observers of what they're required to do.
     override fun locationSelected(searchResult: SearchResult) {
         viewState.value = ViewState(emptyList())
         commands.value = SelectLocation(searchResult.locationName, searchResult.latitude, searchResult.longitude)

@@ -2,6 +2,10 @@ package com.example.freeweather.data.api.dto
 
 import com.google.gson.annotations.SerializedName
 
+/**
+ * Data Transfer Objects used to provide our JSON deserialiser with a mapping that will also be used by all classes at the data level.
+ */
+
 data class WeatherDTO(
     val id: Long,
     val main: String,

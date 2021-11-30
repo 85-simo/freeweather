@@ -13,6 +13,14 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
+/**
+ * Repository implementation to provide a point of contact between the data layer and the layers that sit above - in this case, the presentation layer.
+ * This aims to expose all business-level operations to the upper layers while internally handling the complexities of data retrieval and manipulation.
+ * Every public method must return a business-level representation of data, in order to limit the impact of changes that may occur in this layer.
+ * The 'internal' visibility of the implementation is merely symbolical, as this project consists of a single module only.
+ * It is however still useful in conveying the necessity not to directly instantiate the class from outside this layer.
+ */
+
 interface Repository {
     suspend fun getCitiesByName(cityName: String): List<City>
     suspend fun getWeatherByCoordinates(lat: Double, lon: Double): WeatherForecast
