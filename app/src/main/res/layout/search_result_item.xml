@@ -11,22 +11,22 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="@dimen/search_item_padding" />
+        app:layout_constraintGuide_begin="@dimen/search_item_padding_vertical" />
     <androidx.constraintlayout.widget.Guideline android:id="@+id/end_guide"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="vertical"
-        app:layout_constraintGuide_end="@dimen/search_item_padding" />
+        app:layout_constraintGuide_end="@dimen/search_item_padding_horizontal" />
     <androidx.constraintlayout.widget.Guideline android:id="@+id/bottom_guide"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="horizontal"
-        app:layout_constraintGuide_end="@dimen/search_item_padding" />
+        app:layout_constraintGuide_end="@dimen/search_item_padding_vertical" />
     <androidx.constraintlayout.widget.Guideline android:id="@+id/start_guide"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="@dimen/search_item_padding" />
+        app:layout_constraintGuide_begin="@dimen/search_item_padding_horizontal" />
 
     <TextView android:id="@+id/search_result"
         android:layout_width="0dp"
@@ -38,6 +38,6 @@
         app:layout_constraintStart_toEndOf="@id/start_guide"
         app:layout_constraintBottom_toTopOf="@id/bottom_guide"
         android:textColor="?android:attr/textColorPrimary"
-        android:textSize="@dimen/text_size_normal"
-        tools:text="Londong, GB"/>
+        android:textSize="@dimen/text_size_x_large"
+        tools:text="London, GB"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
