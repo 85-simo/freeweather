@@ -6,6 +6,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.freeweather.databinding.SearchResultItemBinding
 import com.example.freeweather.presentation.search.SearchViewModel.SearchResult
 
+/**
+ * Simple recyclerview adapter that handles displaying search results to the user.
+ */
 class SearchAdapter(private var searchResults: List<SearchResult>, private val itemClickListener: (SearchResult) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
