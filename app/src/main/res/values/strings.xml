@@ -5,4 +5,15 @@
     <string name="generic_error_title">Error</string>
     <string name="generic_error_content">Oops, something went wrong! Please try again later.</string>
     <string name="ok">OK</string>
+    <string name="min_temp_label">Min:</string>
+    <string name="max_temp_label">Max:</string>
+    <string name="feels_like_label">Feels like</string>
+    <string name="details_label">Details</string>
+    <string name="humidity_label">Humidity:</string>
+    <string name="visibility_label">Visibility:</string>
+    <string name="pressure_label">Pressure:</string>
+    <string name="wind_speed_label">Wind speed:</string>
+    <string name="wind_angle_label">Wind angle:</string>
+    <string name="sunrise_label">Sunrise:</string>
+    <string name="sunset_label">Sunset:</string>
 </resources>

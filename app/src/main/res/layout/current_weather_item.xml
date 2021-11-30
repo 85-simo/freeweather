@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="?android:attr/colorPrimary">
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/top_guide"
         android:layout_width="0dp"
@@ -91,7 +92,7 @@
         android:layout_height="wrap_content"
         android:textColor="?android:attr/textColorPrimary"
         android:textSize="@dimen/text_size_small"
-        android:text="Min:"
+        android:text="@string/min_temp_label"
         app:layout_constraintEnd_toStartOf="@id/min_temp_value"
         app:layout_constraintBaseline_toBaselineOf="@id/min_temp_value"
         android:layout_marginEnd="2dp"/>
@@ -110,7 +111,7 @@
         android:layout_height="wrap_content"
         android:textColor="?android:attr/textColorPrimary"
         android:textSize="@dimen/text_size_small"
-        android:text="Max:"
+        android:text="@string/max_temp_label"
         app:layout_constraintEnd_toStartOf="@id/max_temp_value"
         app:layout_constraintBaseline_toBaselineOf="@id/max_temp_value"
         android:layout_marginEnd="2dp"/>
@@ -130,7 +131,7 @@
         android:layout_height="wrap_content"
         android:textColor="?android:attr/textColorPrimary"
         android:textSize="@dimen/text_size_small"
-        android:text="Feels like"
+        android:text="@string/feels_like_label"
         app:layout_constraintEnd_toStartOf="@id/feels_like_value"
         app:layout_constraintBaseline_toBaselineOf="@id/feels_like_value"
         android:layout_marginEnd="4dp" />
@@ -142,7 +143,7 @@
         app:layout_constraintStart_toEndOf="@id/start_guide"
         android:textColor="?android:attr/textColorPrimary"
         android:textSize="@dimen/text_size_large"
-        android:text="Details"
+        android:text="@string/details_label"
         android:layout_marginTop="34dp" />
 
     <TextView android:id="@+id/humidity_label"
@@ -150,7 +151,7 @@
         android:layout_height="wrap_content"
         android:textColor="?android:attr/textColorPrimary"
         android:textSize="@dimen/text_size_normal"
-        android:text="Humidity:"
+        android:text="@string/humidity_label"
         app:layout_constraintStart_toStartOf="@id/details_title"
         app:layout_constraintTop_toBottomOf="@id/details_title"
         android:layout_marginTop="8dp" />
@@ -170,7 +171,7 @@
         android:layout_height="wrap_content"
         android:textColor="?android:attr/textColorPrimary"
         android:textSize="@dimen/text_size_normal"
-        android:text="Visibility:"
+        android:text="@string/visibility_label"
         android:layout_marginTop="4dp"
         app:layout_constraintStart_toStartOf="@id/humidity_label"
         app:layout_constraintTop_toBottomOf="@id/humidity_label" />
@@ -190,7 +191,7 @@
         android:layout_height="wrap_content"
         android:textColor="?android:attr/textColorPrimary"
         android:textSize="@dimen/text_size_normal"
-        android:text="Pressure:"
+        android:text="@string/pressure_label"
         app:layout_constraintStart_toStartOf="@id/visibility_label"
         app:layout_constraintTop_toBottomOf="@id/visibility_label"
         android:layout_marginTop="4dp" />
@@ -210,7 +211,7 @@
         android:layout_height="wrap_content"
         android:textColor="?android:attr/textColorPrimary"
         android:textSize="@dimen/text_size_normal"
-        android:text="Wind speed:"
+        android:text="@string/wind_speed_label"
         app:layout_constraintStart_toStartOf="@id/pressure_label"
         app:layout_constraintTop_toBottomOf="@id/pressure_label"
         android:layout_marginTop="4dp" />
@@ -230,7 +231,7 @@
         android:layout_height="wrap_content"
         android:textColor="?android:attr/textColorPrimary"
         android:textSize="@dimen/text_size_normal"
-        android:text="Wind angle:"
+        android:text="@string/wind_angle_label"
         app:layout_constraintStart_toStartOf="@id/wind_speed_label"
         app:layout_constraintTop_toBottomOf="@id/wind_speed_label"
         android:layout_marginTop="4dp" />
@@ -250,7 +251,7 @@
         android:layout_height="wrap_content"
         android:textColor="?android:attr/textColorPrimary"
         android:textSize="@dimen/text_size_normal"
-        android:text="Sunrise:"
+        android:text="@string/sunrise_label"
         app:layout_constraintStart_toStartOf="@id/wind_angle_label"
         app:layout_constraintTop_toBottomOf="@id/wind_angle_label"
         android:layout_marginTop="4dp" />
@@ -270,7 +271,7 @@
         android:layout_height="wrap_content"
         android:textColor="?android:attr/textColorPrimary"
         android:textSize="@dimen/text_size_normal"
-        android:text="Sunset:"
+        android:text="@string/sunset_label"
         app:layout_constraintStart_toStartOf="@id/sunrise_label"
         app:layout_constraintTop_toBottomOf="@id/sunrise_label"
         android:layout_marginTop="4dp"

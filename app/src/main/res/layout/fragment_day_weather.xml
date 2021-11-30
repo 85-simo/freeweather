@@ -28,6 +28,7 @@
         android:layout_marginTop="@dimen/view_padding">
         <androidx.recyclerview.widget.RecyclerView android:id="@+id/weather_recycler"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:background="?android:attr/windowBackground"/>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
