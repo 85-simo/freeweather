@@ -94,7 +94,7 @@ internal class SearchViewModelImpl @Inject constructor(
 }
 
 private fun City.toSearchResult() = SearchResult(
-    locationName = listOfNotNull(name, state, country).joinToString(),
+    locationName = listOfNotNull(name, state, country).joinToString(", "),
     latitude = latitude,
     longitude = longitude
 )

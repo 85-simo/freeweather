@@ -28,11 +28,11 @@ import javax.inject.Inject
 import kotlin.math.roundToInt
 
 private const val TIME_FORMAT = "HH:mm"
-private const val DATE_TIME_FORMAT = "EEE, d MMM yyyy HH:mm:ss"
+private const val DATE_TIME_FORMAT = "EEE, d MMM yyyy, HH:mm"
 private const val DATE_FORMAT = "EEE, d MMM"
 private const val DEFAULT_LOCATION_NAME = "London, GB"
-private const val DEFAULT_LOCATION_LAT = 51.509865
-private const val DEFAULT_LOCATION_LON = -0.118092
+private const val DEFAULT_LOCATION_LAT = 51.5085
+private const val DEFAULT_LOCATION_LON = -0.1257
 
 interface DayWeatherViewModel {
     sealed class Command {
@@ -83,6 +83,7 @@ interface DayWeatherViewModel {
     fun locationSet(locationCommaSeparated: String, lat: Double, lon: Double)
     fun searchClicked()
     fun favouriteToggleClicked()
+    fun refresh()
 }
 
 @HiltViewModel
@@ -99,25 +100,21 @@ internal class DayWeatherViewModelImpl @Inject constructor(
     }
 
     override fun locationSet(locationCommaSeparated: String, lat: Double, lon: Double) {
+        val locationParts = locationCommaSeparated.split(",")
+        val locationName = locationParts[0].trim()
+        val locationState = if (locationParts.size == 3) locationParts[1].trim() else null
+        val locationCountry = if (locationParts.size == 3) locationParts[2].trim() else locationParts[1].trim()
+        currentLocation = City(name = locationName, state = locationState, country = locationCountry, latitude = lat, longitude = lon)
         viewModelScope.launch(Dispatchers.IO) {
+            var isFavourite = false
             try {
                 val weatherForecast = repository.getWeatherByCoordinates(lat, lon)
-                var isFavourite = false
-                repository.getFavouriteCityByCoordinates(lat, lon)?.let {
-                    isFavourite = true
-                    currentLocation = it
-                } ?: run {
-                    val locationParts = locationCommaSeparated.split(",")
-                    val locationName = locationParts[0]
-                    val locationState = if (locationParts.size == 3) locationParts[1] else null
-                    val locationCountry =
-                        if (locationParts.size == 3) locationParts[2] else locationParts[1]
-                    currentLocation = City(name = locationName, state = locationState, country = locationCountry, latitude = lat, longitude = lon)
-                }
-                viewStateStream.postValue(
-                    ViewState(locationCommaSeparated, isFavourite, weatherForecast.toWeatherInfo())
+                isFavourite = repository.getFavouriteCityByCoordinates(lat, lon) != null
+                viewStateStream.postValue(ViewState(locationCommaSeparated, isFavourite, weatherForecast.toWeatherInfo())
                 )
             } catch (e: Exception) {
+                val viewState = viewStateStream.value?.copy(locationName = locationCommaSeparated) ?: ViewState(locationCommaSeparated, isFavourite, emptyList())
+                viewStateStream.postValue(viewState)
                 commands.postValue(ShowDialog(R.string.generic_error_title, R.string.generic_error_content))
             }
         }
@@ -144,6 +141,14 @@ internal class DayWeatherViewModelImpl @Inject constructor(
                 commands.postValue(ShowDialog(R.string.generic_error_title, R.string.generic_error_content))
             }
         }
+    }
+
+    override fun refresh() {
+        locationSet(
+            listOfNotNull(currentLocation.name, currentLocation.state, currentLocation.country).joinToString(", "),
+            currentLocation.latitude,
+            currentLocation.longitude
+        )
     }
 }
 

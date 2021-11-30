@@ -49,11 +49,17 @@ class DayWeatherFragment : BaseFragment<FragmentDayWeatherBinding>() {
             }
             true
         }
+        binding.swipeRefresh.setOnRefreshListener {
+            dayWeatherViewModel.refresh()
+        }
 
         dayWeatherViewModel.viewStateStream.observe(viewLifecycleOwner) { viewState ->
             binding.titlebar.title = viewState.locationName
             weatherAdapter.submitList(viewState.weatherInfo)
             weatherAdapter.setFavouriteLocation(viewState.locationFavourite)
+            if (binding.swipeRefresh.isRefreshing) {
+                binding.swipeRefresh.isRefreshing = false
+            }
         }
         dayWeatherViewModel.commands.observe(viewLifecycleOwner) { command ->
             when (command) {

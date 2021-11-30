@@ -3,7 +3,6 @@ package com.example.freeweather.hilt.modules
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.os.Build
 import com.example.freeweather.data.api.RestClient
 import com.example.freeweather.data.api.RestClientImpl
 import com.example.freeweather.data.api.RestGeocoding
