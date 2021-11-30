@@ -36,6 +36,10 @@ The following third-party libraries have been used:
   - [Picasso](https://github.com/square/picasso)
 - Mocking
   - [Mockito Kotlin](https://github.com/mockito/mockito-kotlin)
+
+## Build
+
+The project shouldn't require any peculiar build steps, it should be sufficient to clone this repository to your local machine, import it into your Android Studio instance and build as usual.
   
 ## Attributions
 
