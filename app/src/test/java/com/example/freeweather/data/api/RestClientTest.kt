@@ -5,6 +5,7 @@ import com.example.freeweather.data.api.dto.*
 import com.example.freeweather.hilt.modules.ApiModule
 import com.example.freeweather.utils.enqueueResponse
 import kotlinx.coroutines.runBlocking
+import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -35,14 +36,14 @@ class RestClientTest {
     @Before
     fun setUp() {
         whenever(mockContext.cacheDir).thenReturn(tempFolder.root)
-        val interceptor = ApiModule.provideInterceptor()
-        val httpInterceptor = ApiModule.provideHttpLoggingInterceptor()
+        val apiKeyInterceptor = ApiModule.provideApiKeyInterceptor()
         val cache = ApiModule.provideApiCache(mockContext)
-        val client = ApiModule.provideHttpClient(interceptor, httpInterceptor, cache)
-            .newBuilder()
+        val client = OkHttpClient.Builder()
             .readTimeout(1, TimeUnit.SECONDS)
             .writeTimeout(1, TimeUnit.SECONDS)
             .connectTimeout(1, TimeUnit.SECONDS)
+            .addInterceptor(apiKeyInterceptor)
+            .cache(cache)
             .build()
         val retrofit = Retrofit.Builder()
             .baseUrl(mockWebServer.url("/"))
